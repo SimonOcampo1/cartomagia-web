@@ -1,0 +1,129 @@
+import { Player } from '../components/Player.tsx'
+import { VideoEmbed } from '../components/VideoEmbed.tsx'
+import { lessonById } from '../data/lessons.ts'
+import { LEVEL_NAME, TAG_NAME } from '../data/types.ts'
+import { videos } from '../data/videos.ts'
+import { useLearned } from '../lib.ts'
+
+export function LessonPage({ id, kind }: { id: string; kind: 'truco' | 'tecnica' }) {
+  const l = lessonById[id]
+  const { learned, toggle } = useLearned()
+  if (!l) return <NotFound />
+  const vids = [...new Set([...(l.videos ?? []), ...videos.filter((v) => v.links.includes(l.id)).map((v) => v.id)])]
+    .map((vid) => videos.find((v) => v.id === vid))
+    .filter((v) => v !== undefined)
+  const techs = (l.techniques ?? []).map((t) => lessonById[t]).filter(Boolean)
+  const usedBy = Object.values(lessonById).filter((x) => x.techniques?.includes(l.id))
+
+  return (
+    <main className="page lesson">
+      <nav className="crumbs" aria-label="Migas">
+        <a href={kind === 'truco' ? '#/trucos' : '#/tecnicas'}>{kind === 'truco' ? 'Trucos' : 'Técnicas'}</a>
+        <span aria-hidden>/</span>
+        <span>{LEVEL_NAME[l.level]}</span>
+      </nav>
+      <header className="lesson-head">
+        <h1>{l.name}</h1>
+        <p className="lead">{l.effect}</p>
+        <ul className="taglist">
+          <li className={`lvtag lv-${l.level}`}>{LEVEL_NAME[l.level]}</li>
+          {l.tags
+            .filter((t) => t !== 'tecnica')
+            .map((t) => (
+              <li key={t}>{TAG_NAME[t]}</li>
+            ))}
+          {l.minutes && <li>~{l.minutes} min</li>}
+        </ul>
+      </header>
+
+      {l.script ? (
+        <Player key={l.id} script={l.script} sim={l.sim} />
+      ) : (
+        <p className="no-anim">Esta técnica depende del ángulo y el ritmo de las manos más que del orden de las cartas: apréndela con los videos de abajo.</p>
+      )}
+
+      <div className="lesson-body">
+        <section>
+          <h2>El secreto</h2>
+          <p>{l.method}</p>
+          {l.tips && (
+            <>
+              <h3>Consejos</h3>
+              <ul className="tips">
+                {l.tips.map((t) => (
+                  <li key={t}>{t}</li>
+                ))}
+              </ul>
+            </>
+          )}
+          {l.origin && <p className="origin">{l.origin}</p>}
+          <button type="button" className={`learned ${learned.has(l.id) ? 'on' : ''}`} aria-pressed={learned.has(l.id)} onClick={() => toggle(l.id)}>
+            {learned.has(l.id) ? '✓ Aprendido' : 'Marcar como aprendido'}
+          </button>
+        </section>
+        <aside>
+          {techs.length > 0 && (
+            <>
+              <h2>Técnicas que usa</h2>
+              <ul className="xlinks">
+                {techs.map((t) => (
+                  <li key={t.id}>
+                    <a href={`#/tecnica/${t.id}`}>{t.name}</a> <span>{LEVEL_NAME[t.level]}</span>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+          {usedBy.length > 0 && (
+            <>
+              <h2>Trucos que la usan</h2>
+              <ul className="xlinks">
+                {usedBy.map((t) => (
+                  <li key={t.id}>
+                    <a href={`#/truco/${t.id}`}>{t.name}</a> <span>{LEVEL_NAME[t.level]}</span>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+          {l.links && (
+            <>
+              <h2>Más fuentes</h2>
+              <ul className="xlinks">
+                {l.links.map((k) => (
+                  <li key={k.url}>
+                    <a href={k.url} target="_blank" rel="noreferrer">
+                      {k.label} ↗
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+        </aside>
+      </div>
+
+      {vids.length > 0 && (
+        <section className="lesson-videos">
+          <h2>Videos</h2>
+          <div className="video-grid">
+            {vids.map((v) => (
+              <VideoEmbed key={v.id} v={v} />
+            ))}
+          </div>
+        </section>
+      )}
+    </main>
+  )
+}
+
+export function NotFound() {
+  return (
+    <main className="page">
+      <h1>Esta carta no está en el mazo</h1>
+      <p>
+        La página no existe. <a href="#/">Volver al inicio</a>
+      </p>
+    </main>
+  )
+}
