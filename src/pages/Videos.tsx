@@ -14,23 +14,25 @@ export function Videos() {
   const [lang, setLang] = useState('')
   const [channel, setChannel] = useState('')
   const [length, setLength] = useState('')
+  const [origin, setOrigin] = useState('')
   const shown = videos.filter(
     (v) =>
       matches({ ...f, q: norm(f.q) }, v.level, v.tags, norm(`${v.title} ${v.channel}`)) &&
       (!lang || v.lang === lang) &&
       (!channel || v.channel === channel) &&
-      (!length || (length === 'short' ? v.dur <= 180 : v.dur > 180)),
+      (!length || (length === 'short' ? v.dur <= 180 : v.dur > 180)) &&
+      (!origin || (origin === 'ext' ? v.source === 'ext' : !v.source)),
   )
   return (
     <main className="page">
       <header className="page-head">
         <h1>Videoteca</h1>
         <p>
-          {videos.length} tutoriales de Julio Ribera, Santi Marcilla, Matt McGurk, A Million Card Tricks, Steven Taputoro y más, clasificados por nivel y tipo de truco. Vienen de{' '}
+          {videos.length} tutoriales clasificados por nivel y tipo de truco: los de{' '}
           <a href={`https://www.youtube.com/playlist?list=${PLAYLIST_ID}`} target="_blank" rel="noreferrer">
-            esta lista de YouTube ↗
-          </a>
-          . El nivel es orientativo: lo asignamos por título y canal.
+            tu lista de YouTube ↗
+          </a>{' '}
+          más {videos.filter((v) => v.source === 'ext').length} elegidos de otros canales de referencia (52Kards, Numberphile, CardMechanic, Chris Ramsay, Italo Castillo…) para cada ficha. El nivel es orientativo.
         </p>
       </header>
       <Filters f={f} set={setF} tags={TAGS} count={shown.length}>
@@ -45,6 +47,11 @@ export function Videos() {
             {channels.map((c) => (
               <option key={c}>{c}</option>
             ))}
+          </select>
+          <select value={origin} onChange={(e) => setOrigin(e.target.value)} aria-label="Origen">
+            <option value="">Todas las fuentes</option>
+            <option value="playlist">Tu lista</option>
+            <option value="ext">Otros canales</option>
           </select>
           <select value={length} onChange={(e) => setLength(e.target.value)} aria-label="Duración">
             <option value="">Cualquier duración</option>

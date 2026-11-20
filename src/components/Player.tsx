@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { rng, short } from '../engine/cards.ts'
 import { run, type ScriptFn } from '../engine/scene.ts'
-import { Stage } from './Stage.tsx'
+import { MiniCard, Stage, viewOf } from './Stage.tsx'
 
 const newSeed = () => Math.floor(Math.random() * 1e9)
 
@@ -12,6 +12,7 @@ export function Player({ script, sim }: { script: ScriptFn; sim?: boolean }) {
   const [playing, setPlaying] = useState(false)
   const [xray, setXray] = useState(true)
   const frames = useMemo(() => run(script, answers, rng(seed)), [script, answers, seed])
+  const view = useMemo(() => viewOf(frames), [frames])
   const i = Math.min(idx, frames.length - 1)
   const f = frames[i]
   const waiting = f.ask && f.ask.answer === undefined
@@ -48,7 +49,7 @@ export function Player({ script, sim }: { script: ScriptFn; sim?: boolean }) {
   return (
     <section className="player" aria-label="Demostración paso a paso">
       <div className={`table ${f.tone ?? ''}`}>
-        <Stage frame={f} xray={xray} clickable={waiting && f.ask?.kind === 'card' ? f.ask.among : undefined} onPick={answer} />
+        <Stage frame={f} view={view} xray={xray} clickable={waiting && f.ask?.kind === 'card' ? f.ask.among : undefined} onPick={answer} />
       </div>
       <div className="caption" aria-live="polite">
         <span className="step">
@@ -56,6 +57,14 @@ export function Player({ script, sim }: { script: ScriptFn; sim?: boolean }) {
           {!(frames.at(-1)!.ask && frames.at(-1)!.ask!.answer === undefined) && <small> de {frames.length}</small>}
         </span>
         <div>
+          {f.inset && xray && (
+            <div className="inset">
+              <span>{f.inset.label}</span>
+              {f.inset.cards.map((c) => (
+                <MiniCard key={c} id={c} />
+              ))}
+            </div>
+          )}
           <p className={`say ${f.tone ?? ''}`}>{f.caption}</p>
           {f.note && <p className="note">{f.note}</p>}
           {f.ask?.answer !== undefined && (
@@ -74,13 +83,13 @@ export function Player({ script, sim }: { script: ScriptFn; sim?: boolean }) {
         </div>
       </div>
       <div className="controls">
-        <button type="button" onClick={() => setIdx(Math.max(i - 1, 0))} disabled={i === 0} aria-label="Paso anterior">
+        <button type="button" className="prev" onClick={() => setIdx(Math.max(i - 1, 0))} disabled={i === 0} aria-label="Paso anterior">
           ←
         </button>
         <button type="button" className="primary" onClick={() => (atEnd ? restart(false) : setPlaying(!playing))} disabled={waiting}>
           {atEnd ? 'Repetir' : playing ? 'Pausa' : 'Reproducir'}
         </button>
-        <button type="button" onClick={() => setIdx(i + 1)} disabled={waiting || atEnd} aria-label="Paso siguiente">
+        <button type="button" className="next" onClick={() => setIdx(i + 1)} disabled={waiting || atEnd} aria-label="Paso siguiente">
           →
         </button>
         <input
@@ -92,7 +101,7 @@ export function Player({ script, sim }: { script: ScriptFn; sim?: boolean }) {
           aria-label="Ir al paso"
         />
         {sim && (
-          <button type="button" onClick={() => restart(true)}>
+          <button type="button" className="sim" onClick={() => restart(true)}>
             Nueva mezcla
           </button>
         )}

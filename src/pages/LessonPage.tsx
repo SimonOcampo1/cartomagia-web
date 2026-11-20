@@ -39,7 +39,7 @@ export function LessonPage({ id, kind }: { id: string; kind: 'truco' | 'tecnica'
       {l.script ? (
         <Player key={l.id} script={l.script} sim={l.sim} />
       ) : (
-        <p className="no-anim">Esta técnica depende del ángulo y el ritmo de las manos más que del orden de las cartas: apréndela con los videos de abajo.</p>
+        <p className="no-anim">Aquí lo importante es el ángulo y el ritmo de las manos, no el orden de las cartas: apréndelo con los videos de abajo.</p>
       )}
 
       <div className="lesson-body">

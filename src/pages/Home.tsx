@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Stage } from '../components/Stage.tsx'
+import { MiniCard, Stage, viewOf } from '../components/Stage.tsx'
 import { rng } from '../engine/cards.ts'
 import { run } from '../engine/scene.ts'
 import { corteCruzado } from '../data/scripts.ts'
@@ -32,6 +32,7 @@ function Hero() {
     const t = setTimeout(() => (i < frames.length - 1 ? setI(i + 1) : (setI(0), setSeed(seed + 1))), i === frames.length - 1 ? 4000 : 2000)
     return () => clearTimeout(t)
   }, [i, frames.length, seed])
+  const view = useMemo(() => viewOf(frames), [frames])
   const f = frames[Math.min(i, frames.length - 1)]
   return (
     <section className="hero">
@@ -54,11 +55,16 @@ function Hero() {
       </div>
       <figure className="hero-table">
         <div className={`table ${f.tone ?? ''}`}>
-          <Stage frame={f} />
+          <Stage frame={f} view={view} />
         </div>
         <figcaption>
           <span>Ahora en el tapete · Predicción con corte cruzado</span>
           {f.caption}
+          {f.inset && (
+            <span className="inset">
+              {f.inset.label} <MiniCard id={f.inset.cards[0]} />
+            </span>
+          )}
         </figcaption>
       </figure>
     </section>

@@ -55,23 +55,54 @@ function Hand({ pose, side, u }: { pose: HandPose; side: 'l' | 'r'; u: number })
   )
 }
 
+export type View = { x: number; y: number; w: number; h: number }
+
+/** Encuadre que contiene todo lo que pasa en el truco: el tapete se ajusta en vez de dejar paño vacío. */
+export function viewOf(frames: Frame[]): View {
+  let [x0, y0, x1, y1] = [W, H, 0, 0]
+  const add = (x: number, y: number, w: number, h: number) => {
+    x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x + w); y1 = Math.max(y1, y + h)
+  }
+  for (const f of frames) {
+    for (const [z, cards] of Object.entries(f.zones)) {
+      const g = f.geo[z]
+      add(g.x, g.y, CW, CH) // la zona cuenta aunque esté vacía: el encuadre no salta
+      if (g.label) add(g.x, g.y - 3, 10, 3)
+      cards.forEach((_, i) => {
+        const p = pos(g, i)
+        const r = p.rot ? CH : 0 // girada: reservar el lado largo
+        add(p.x - r / 4, p.y - r / 4, CW + r / 2, CH)
+      })
+    }
+    for (const h of [f.hands?.l, f.hands?.r]) if (h) add(h.x - 8.5, h.y - 6, 17, 20.4)
+  }
+  const pad = 3
+  x0 = Math.max(0, x0 - pad); y0 = Math.max(0, y0 - pad); x1 = Math.min(W, x1 + pad); y1 = Math.min(H, y1 + pad)
+  // no más apaisado que 2:1 ni más alto que 4:3
+  let w = x1 - x0, h = y1 - y0
+  if (w / h > 2) { const nh = w / 2; y0 = Math.max(0, y0 - (nh - h) / 2); h = Math.min(nh, H - y0) }
+  if (h / w > 0.75) { const nw = h / 0.75; x0 = Math.max(0, x0 - (nw - w) / 2); w = Math.min(nw, W - x0) }
+  return { x: x0, y: y0, w, h }
+}
+
 type Props = {
   frame: Frame
   clickable?: string[] // zonas cuyas cartas se pueden tocar
   onPick?: (c: CardId) => void
   xray?: boolean
+  view?: View
 }
 
-export function Stage({ frame, clickable, onPick, xray = true }: Props) {
+export function Stage({ frame, clickable, onPick, xray = true, view = { x: 0, y: 0, w: W, h: H } }: Props) {
   const ref = useRef<HTMLDivElement>(null)
   const [u, setU] = useState(0)
   const reduce = useReducedMotion()
   useLayoutEffect(() => {
     const el = ref.current!
-    const ro = new ResizeObserver(() => setU(el.clientWidth / W))
+    const ro = new ResizeObserver(() => setU(el.clientWidth / view.w))
     ro.observe(el)
     return () => ro.disconnect()
-  }, [])
+  }, [view.w])
 
   const placed = useMemo(() => {
     const out: { id: CardId; x: number; y: number; rot: number; z: number; zone: string }[] = []
@@ -86,9 +117,9 @@ export function Stage({ frame, clickable, onPick, xray = true }: Props) {
   const stagger = movedCount > 1 ? Math.min(0.045, 1.4 / movedCount) : 0
 
   return (
-    <div className="stage" ref={ref} style={{ aspectRatio: `${W} / ${H}` }}>
+    <div className="stage" ref={ref} style={{ aspectRatio: `${view.w} / ${view.h}`, maxWidth: `calc((100svh - 300px) * ${view.w / view.h})` }}>
       {u > 0 && (
-        <>
+        <div className="camera" style={{ transform: `translate(${-view.x * u}px, ${-view.y * u}px)` }}>
           {Object.entries(frame.geo).map(([z, g]) =>
             g.label ? (
               <span key={z} className="zone-label" style={{ left: g.x * u, top: (g.y - 2.6) * u, fontSize: Math.max(10, u * 1.5) }}>
@@ -128,17 +159,7 @@ export function Stage({ frame, clickable, onPick, xray = true }: Props) {
               </motion.button>
             )
           })}
-          {frame.inset && (
-            <div className="inset">
-              <span>{frame.inset.label}</span>
-              <div>
-                {frame.inset.cards.map((c) => (
-                  <MiniCard key={c} id={c} />
-                ))}
-              </div>
-            </div>
-          )}
-        </>
+        </div>
       )}
     </div>
   )

@@ -1,9 +1,10 @@
 // Generado desde la playlist PLBaAwoiYmUUs (yt-dlp). Nivel y etiquetas: clasificación manual + reglas por título.
-import type { Video } from './types.ts'
+import { lessonById } from './lessons.ts'
+import type { Level, Tag, Video } from './types.ts'
 
 export const PLAYLIST_ID = 'PLBaAwoiYmUUs'
 
-export const videos: Video[] = [
+const playlist: Video[] = [
   {"id": "pH2f9rNGpb4", "title": "El mejor truco para empezar en la magia", "channel": "Julio Ribera", "dur": 1236, "lang": "es", "level": "P", "tags": ["automatico"], "links": []},
   {"id": "OvKMwP_xOYc", "title": "EL TRUCO DEL ASCENSOR (mejorado) | Magia con Cartas", "channel": "Julio Ribera", "dur": 628, "lang": "es", "level": "I", "tags": ["juego-de-manos"], "links": ["ascensor", "doble-lift"]},
   {"id": "ck6dPMUWsCI", "title": "AGUA & ACEITE - Truco con Cartas Explicado", "channel": "Julio Ribera", "dur": 294, "lang": "es", "level": "I", "tags": ["ases", "juego-de-manos", "pocas-cartas"], "links": []},
@@ -90,4 +91,80 @@ export const videos: Video[] = [
   {"id": "IAF3m4sFRdA", "title": "LEARN TO DEAL OFF THE BOTTOM! (Strike bottoms)(card magic/trick tutorial)", "channel": "Croco Croco", "dur": 801, "lang": "en", "level": "A", "tags": ["juego-de-manos", "tecnica"], "links": ["bottom-deal"]},
   {"id": "TAXSTjPQ1W4", "title": "My Favorite Card Control - Tutorial", "channel": "A Million Card Tricks", "dur": 116, "lang": "en", "level": "I", "tags": ["control", "juego-de-manos", "short", "tecnica"], "links": ["control-overhand"]},
   {"id": "8zBGMRVsm9U", "title": "This Easy No Setup Card Trick DESTROYED Me (And I'm a Pro)", "channel": "Matt McGurk", "dur": 735, "lang": "en", "level": "P", "tags": ["impromptu", "sin-setup"], "links": []},
+]
+
+// Otros canales de calidad (52Kards, Numberphile, CardMechanic, Chris Ramsay…), elegidos por ficha.
+// Nivel y etiquetas se heredan de las fichas a las que apuntan.
+const external: Omit<Video, 'level' | 'tags'>[] = [
+  {"id": "d7dg7gVDWyg", "title": "21-card trick - Numberphile", "channel": "Numberphile", "dur": 612, "lang": "en", "links": ["veintiuna"]},
+  {"id": "KpF2KsH7yWM", "title": "EL FAMOSO TRUCO DE LAS 21 CARTAS", "channel": "Julio Ribera", "dur": 543, "lang": "es", "links": ["veintiuna"]},
+  {"id": "w3ncGQEEUsA", "title": "Learn how to perform The 21 Card Trick (The Pro's Version)", "channel": "Jeremy Tan", "dur": 680, "lang": "en", "links": ["veintiuna"]},
+  {"id": "SEgmnP_LctM", "title": "Cómo adivinar una carta pensada - Aprende magia", "channel": "Julio Ribera", "dur": 369, "lang": "es", "links": ["carta-clave", "detector"]},
+  {"id": "53wUcYfJBQo", "title": "Truco de magia revelado: La carta clave", "channel": "rakusko33", "dur": 165, "lang": "es", "links": ["carta-clave", "detector"]},
+  {"id": "cU9mdP85b84", "title": "Cut Deeper Force Tutorial!", "channel": "Card Perfect Magician", "dur": 113, "lang": "en", "links": ["corta-mas-profundo", "forzaje-corta-mas-profundo"]},
+  {"id": "0Go9dcovS4g", "title": "The BEST Force Of All Time", "channel": "Sean Devine", "dur": 747, "lang": "en", "links": ["corte-cruzado", "forzaje-cruzado"]},
+  {"id": "HL6IYnOHVTA", "title": "Cross Cut Force Tutorial!", "channel": "Card Perfect Magician", "dur": 280, "lang": "en", "links": ["forzaje-cruzado"]},
+  {"id": "DNIJTRsEbxE", "title": "Amazing Easy CARD TRICK: Spectator Cuts the Aces", "channel": "52Kards", "dur": 210, "lang": "en", "links": ["ases-cortes"]},
+  {"id": "zMk84wnF5YU", "title": "Spectator Finds The Aces - Tutorial", "channel": "Sean Devine", "dur": 550, "lang": "en", "links": ["ases-cortes"]},
+  {"id": "oOzPEEQa24I", "title": "AMAZING Reversed Card Trick (Tutorial)", "channel": "Sean Devine", "dur": 567, "lang": "en", "links": ["inversion"]},
+  {"id": "cjxwjk2eStU", "title": "The Si Stebbins Stack", "channel": "CardMechanic", "dur": 236, "lang": "en", "links": ["si-stebbins", "si-stebbins-tec"]},
+  {"id": "H8mTibzkz6A", "title": "Baraja Si Stebbins Tutorial", "channel": "ITALO CASTILLO", "dur": 702, "lang": "es", "links": ["si-stebbins", "si-stebbins-tec"]},
+  {"id": "zhvjSAtxEhc", "title": "A Card Trick Based on the Gilbreath Principle", "channel": "Mathematical Association of America", "dur": 142, "lang": "en", "links": ["gilbreath", "gilbreath-tec"]},
+  {"id": "FN3ELX2swJc", "title": "Gilbreath Principle (tutorial)", "channel": "The Magician's Forum", "dur": 451, "lang": "en", "links": ["gilbreath", "gilbreath-tec"]},
+  {"id": "WYsP1PhoAZc", "title": "Shuffling Card Trick - Numberphile", "channel": "Numberphile", "dur": 799, "lang": "en", "links": ["gilbreath", "gilbreath-tec"]},
+  {"id": "yeJD98Zrmu4", "title": "Re: Maths Card Trick (Kruskal's Count)", "channel": "singingbanana", "dur": 247, "lang": "en", "links": ["kruskal"]},
+  {"id": "j94VUp6NZEg", "title": "The Number Illusion You Won't Believe", "channel": "Vsauce2", "dur": 996, "lang": "en", "links": ["kruskal"]},
+  {"id": "l7lP9y7Bb5g", "title": "Beautiful Card Trick - Numberphile", "channel": "Numberphile", "dur": 795, "lang": "en", "links": ["veintisiete"]},
+  {"id": "8DmgivVoyfc", "title": "Countdown - Tutorial", "channel": "Mismag822 - The Card Trick Teacher", "dur": 317, "lang": "en", "links": ["countdown"]},
+  {"id": "HvOZmeC-iiY", "title": "Clueless Countdown - Card Tricks For Beginners", "channel": "Mismag822 - The Card Trick Teacher", "dur": 391, "lang": "en", "links": ["countdown"]},
+  {"id": "cho2Km8zw0c", "title": "My Favorite Mathematical Card Trick (3b1b SoME1 submission)", "channel": "Kevin Sun", "dur": 975, "lang": "en", "links": ["fitch"]},
+  {"id": "4UDlmyMyq7Q", "title": "Fitch Cheney's Five Card Trick", "channel": "Scam Nation", "dur": 385, "lang": "en", "links": ["fitch"]},
+  {"id": "A0J_487VquE", "title": "How to Shuffle Cards: Overhand Shuffle", "channel": "52Kards", "dur": 115, "lang": "en", "links": ["overhand"]},
+  {"id": "TS4zJ1iy3bI", "title": "Learn The Overhand Shuffle (Card Magic Tutorial)", "channel": "Jeremy Tan", "dur": 95, "lang": "en", "links": ["overhand"]},
+  {"id": "8dzljQ3cT3g", "title": "10 TRUCOS con CARTAS para BARAJAR como un mago PRO", "channel": "Julio Ribera", "dur": 1032, "lang": "es", "links": ["overhand", "riffle"]},
+  {"id": "Z6CRg9AN9hM", "title": "Learn The Riffle Shuffle (with a twist)", "channel": "Jeremy Tan", "dur": 298, "lang": "en", "links": ["riffle"]},
+  {"id": "2UiEqShx__k", "title": "Thunder Down Under - Card Tricks Revealed", "channel": "Mismag822 - The Card Trick Teacher", "dur": 265, "lang": "en", "links": ["down-under"]},
+  {"id": "xs9q_kHNhu8", "title": "Mastering Equivoque", "channel": "Sean Devine", "dur": 763, "lang": "en", "links": ["equivoque"]},
+  {"id": "J1uZVlT1mPk", "title": "Learn to Force ANY Object | The Equivoque Masterclass", "channel": "Reid Ferry", "dur": 2009, "lang": "en", "links": ["equivoque"]},
+  {"id": "eg5OHLu8Nys", "title": "Hindu Shuffle Force Tutorial", "channel": "52Kards", "dur": 86, "lang": "en", "links": ["forzaje-hindu"]},
+  {"id": "RwI76GFAV_g", "title": "Cómo REVOLVER las CARTAS - Mezcla HINDÚ + FORZAJE + VARIANTE", "channel": "Mago Li Emz ", "dur": 289, "lang": "es", "links": ["forzaje-hindu"]},
+  {"id": "Gjd4EDm3EWU", "title": "Easy Beginner Double Lift Technique", "channel": "52Kards", "dur": 174, "lang": "en", "links": ["doble-lift", "ascensor"]},
+  {"id": "1-6Niz-VxUY", "title": "The BEST Double Lifts In Magic : SLEIGHT TUTORIAL", "channel": "Alex Pandrea", "dur": 1182, "lang": "en", "links": ["doble-lift"]},
+  {"id": "_YOaRuu7mtM", "title": "Como hacer doble lift TRUCOS DE MAGIA CON CARTAS", "channel": "ITALO CASTILLO", "dur": 826, "lang": "es", "links": ["doble-lift"]},
+  {"id": "UxOmugFuyOc", "title": "The Glide - TheCardMechanic.com", "channel": "Steven Warren", "dur": 131, "lang": "en", "links": ["glide"]},
+  {"id": "DBZaQoeXtN4", "title": "Easy Card Switch Trick Tutorial // The GLIDE", "channel": "52Kards", "dur": 820, "lang": "en", "links": ["glide"]},
+  {"id": "VkE8fNFBUw8", "title": "Card Control - Overhand Shuffle Control [HD]", "channel": "52Kards", "dur": 382, "lang": "en", "links": ["control-overhand"]},
+  {"id": "77SucSqStFU", "title": "The BEST Overhand Shuffle Controls | False Shuffles", "channel": "CardMechanic", "dur": 384, "lang": "en", "links": ["control-overhand"]},
+  {"id": "zghdPHjZIA4", "title": "CLEANEST Card Control // BLUFF Pass Tutorial", "channel": "52Kards", "dur": 308, "lang": "en", "links": ["bluff-pass"]},
+  {"id": "bi1HXK1706c", "title": "Card College Color Change - Tutorial!", "channel": "Sean Devine", "dur": 315, "lang": "en", "links": ["cambio-color"]},
+  {"id": "vZTvL38tJhw", "title": "THE ELMSLEY COUNT - Tutorial", "channel": "Chris Ramsay", "dur": 627, "lang": "en", "links": ["elmsley"]},
+  {"id": "MrAmRR7W4Ts", "title": "Elmsley Count Tutorial", "channel": "52Kards", "dur": 449, "lang": "en", "links": ["elmsley"]},
+  {"id": "gznqMPKrDY4", "title": "Cuenta ELSMLEY Tutorial PRO", "channel": "ITALO CASTILLO", "dur": 367, "lang": "es", "links": ["elmsley"]},
+  {"id": "14V8qJc-W3I", "title": "THE BOTTOM DEAL - Card Magic Tutorial (EASY VERSION)", "channel": "Alex Pandrea", "dur": 984, "lang": "en", "links": ["bottom-deal"]},
+  {"id": "LL6t2r9ZQVc", "title": "The PERFECT Bottom Deal TUTORIAL!", "channel": "CardMechanic", "dur": 768, "lang": "en", "links": ["bottom-deal"]},
+  {"id": "dUqP3a2Huyk", "title": "CLASSIC PASS - Tutorial en español", "channel": "Julio Ribera", "dur": 445, "lang": "ru", "links": ["pase-clasico"]},
+  {"id": "_dLpUHJ3szE", "title": "The CLASSIC PASS Tutorial - The Ultimate Guide To The Pass", "channel": "Alex Pandrea", "dur": 984, "lang": "en", "links": ["pase-clasico"]},
+  {"id": "8gfU7XXA_mw", "title": "Card Tricks: The Classic Pass Tutorial [HD]", "channel": "52Kards", "dur": 520, "lang": "en", "links": ["pase-clasico"]},
+  {"id": "WrjWrywznms", "title": "Learn this Simple Card Trick - \"Oil & Water\" (Magic Tutorial)", "channel": "Jeremy Tan", "dur": 456, "lang": "en", "links": ["agua-aceite"]},
+  {"id": "MZNqY0JN-G4", "title": "The MESMERIZING Oil and Water Card Trick! (In-Depth Tutorial)", "channel": "CardMechanic", "dur": 1024, "lang": "en", "links": ["agua-aceite"]},
+  {"id": "CJKp8rOdHGM", "title": "ULTIMATE Oil & Water - TUTORIAL", "channel": "Sean Devine", "dur": 570, "lang": "en", "links": ["agua-aceite"]},
+  {"id": "bIFKI4gBjkM", "title": "Card Tricks: Twisting The Aces Performance + Tutorial", "channel": "52Kards", "dur": 288, "lang": "en", "links": ["twisting"]},
+  {"id": "f5IibHtk2R4", "title": "Learn the ORIGINAL Twisting the Aces by Dai Vernon. A Classic and a Must Know for Every Magician!", "channel": "4suits - card magic", "dur": 605, "lang": "en", "links": ["twisting"]},
+  {"id": "9vD6F811GgQ", "title": "TWISTING The ACES | Card Trick Tutorial!", "channel": "CardMechanic", "dur": 500, "lang": "en", "links": ["twisting"]},
+]
+
+const ORDER: Level[] = ['P', 'I', 'A']
+const SKIP: Tag[] = ['interactivo']
+
+export const videos: Video[] = [
+  ...playlist,
+  ...external.map((v) => {
+    const ls = v.links.map((id) => lessonById[id]).filter(Boolean)
+    return {
+      ...v,
+      source: 'ext' as const,
+      level: ORDER[Math.min(...ls.map((l) => ORDER.indexOf(l.level)))] ?? 'P',
+      tags: [...new Set([...ls.flatMap((l) => l.tags), ...(v.dur <= 180 ? (['short'] as Tag[]) : [])])].filter((t) => !SKIP.includes(t)),
+    }
+  }),
 ]

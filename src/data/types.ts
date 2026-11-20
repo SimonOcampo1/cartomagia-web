@@ -76,6 +76,7 @@ export type Video = {
   level: Level
   tags: Tag[]
   links: string[]
+  source?: 'ext'
 }
 
 export const yt = (q: string): string => `https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`

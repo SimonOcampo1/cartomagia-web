@@ -15,8 +15,10 @@
   --cool: oklch(0.78 0.09 225);
   --card-black: oklch(0.22 0.015 260);
   --win: oklch(0.8 0.12 150);
-  --display: 'Bodoni Moda', 'Didot', Georgia, serif;
-  --body: 'Atkinson Hyperlegible Next', system-ui, sans-serif;
+  --display: 'Gloock', 'Georgia', serif;
+  --body: 'Schibsted Grotesk', system-ui, sans-serif;
+  --wrap: 1200px;
+  --gutter: max(clamp(16px, 4vw, 56px), calc((100% - var(--wrap)) / 2));
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
   color-scheme: dark;
 }
@@ -32,6 +34,7 @@ body {
   background: var(--ink);
   color: var(--text);
   font: 400 1.0625rem/1.6 var(--body);
+  font-synthesis: none;
   overflow-x: hidden;
 }
 a {
@@ -53,7 +56,7 @@ h1,
 h2,
 h3 {
   font-family: var(--display);
-  font-weight: 500;
+  font-weight: 400;
   line-height: 1.08;
   letter-spacing: -0.01em;
   margin: 0;
@@ -91,12 +94,12 @@ button {
   align-items: baseline;
   justify-content: space-between;
   gap: 1rem;
-  padding: 1.1rem clamp(16px, 4vw, 56px);
+  padding: 1.1rem var(--gutter);
   border-bottom: 1px solid var(--line);
   flex-wrap: wrap;
 }
 .brand {
-  font: italic 600 1.75rem/1 var(--display);
+  font: 400 1.75rem/1 var(--display);
   color: var(--paper);
   text-decoration: none;
   display: flex;
@@ -127,9 +130,7 @@ button {
 }
 
 .page {
-  padding: clamp(28px, 5vw, 64px) clamp(16px, 4vw, 56px);
-  max-width: 1280px;
-  margin: 0 auto;
+  padding: clamp(28px, 5vw, 64px) var(--gutter);
 }
 
 /* ── Hero ───────────────────── */
@@ -138,9 +139,7 @@ button {
   grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
   gap: clamp(24px, 4vw, 64px);
   align-items: center;
-  padding: clamp(32px, 6vw, 88px) clamp(16px, 4vw, 56px) clamp(40px, 6vw, 80px);
-  max-width: 1440px;
-  margin: 0 auto;
+  padding: clamp(32px, 6vw, 88px) var(--gutter) clamp(40px, 6vw, 80px);
 }
 .kicker {
   font-size: 0.75rem;
@@ -151,12 +150,11 @@ button {
   font-weight: 700;
 }
 .hero h1 {
-  font-size: clamp(2.4rem, 4.6vw, 4.4rem);
-  font-weight: 500;
+  font-size: clamp(2.3rem, 4.4vw, 4.1rem);
 }
 .hero h1 em {
   color: var(--brass);
-  font-weight: 400;
+  font-style: normal;
 }
 .lead {
   font-size: 1.15rem;
@@ -171,8 +169,11 @@ button {
   margin-top: 2rem;
 }
 .btn {
-  display: inline-block;
-  padding: 0.75rem 1.3rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 1.4rem;
   border: 1px solid var(--line);
   border-radius: 999px;
   color: var(--text);
@@ -231,9 +232,9 @@ button {
 .stage {
   position: relative;
   width: 100%;
-  max-width: calc((100svh - 300px) * 5 / 3);
-  min-width: min(100%, 560px);
+  min-width: min(100%, 520px);
   margin: 0 auto;
+  overflow: hidden;
   perspective: 1400px;
 }
 .card {
@@ -309,8 +310,7 @@ button {
   line-height: 1;
 }
 .pip.court {
-  font-style: italic;
-  font-weight: 500;
+  font-weight: 400;
   font-size: 2.6em;
 }
 .back {
@@ -390,25 +390,24 @@ button {
 .hand.above path {
   fill: oklch(0.82 0.04 60 / 0.16);
 }
-.inset {
+.camera {
   position: absolute;
-  right: 0;
-  top: 0;
-  z-index: 9500;
-  background: oklch(0.15 0.02 162 / 0.85);
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 0.45rem 0.6rem 0.55rem;
-  font-size: 0.7rem;
-  letter-spacing: 0.08em;
+  inset: 0;
+}
+.inset {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.5rem;
+  margin: 0 0 0.6rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--muted);
   font-weight: 700;
 }
-.inset > div {
-  display: flex;
-  gap: 0.3rem;
-  margin-top: 0.35rem;
+.inset > span:first-child {
+  margin-right: 0.3rem;
 }
 .mini-card {
   position: relative;
@@ -433,7 +432,7 @@ button {
   min-height: 5.5rem;
 }
 .step {
-  font: italic 500 1.6rem/1 var(--display);
+  font: 400 1.6rem/1 var(--display);
   color: var(--brass);
   white-space: nowrap;
 }
@@ -571,7 +570,7 @@ button {
   align-self: start;
 }
 .level-num {
-  font: italic 400 3.6rem/1 var(--display);
+  font: 400 3.6rem/1 var(--display);
   color: var(--lacre-hi);
 }
 .level-head h3 {
@@ -631,7 +630,7 @@ button {
 }
 .lesson-row .name {
   grid-area: name;
-  font: 500 1.35rem/1.2 var(--display);
+  font: 400 1.3rem/1.25 var(--display);
 }
 .done {
   font: 700 0.65rem/1 var(--body);
@@ -681,11 +680,12 @@ button {
   position: absolute;
   left: 0;
   top: 0.9rem;
-  font: italic 1.2rem/1.3 var(--display);
+  font: 400 1.2rem/1.3 var(--display);
   color: var(--lacre-hi);
 }
 .books cite {
-  font: italic 500 1.3rem/1.3 var(--display);
+  font: 400 1.25rem/1.3 var(--display);
+  font-style: normal;
   color: var(--paper);
 }
 .books span {
@@ -742,9 +742,9 @@ button {
   background: transparent;
   border: 1px solid var(--line);
   border-radius: 999px;
-  padding: 0.35rem 0.85rem;
+  padding: 0 0.95rem;
   font-size: 0.9rem;
-  min-height: 36px;
+  min-height: 40px;
   transition: background 0.15s var(--ease), border-color 0.15s var(--ease), color 0.15s var(--ease);
 }
 .chip:hover {
@@ -873,13 +873,12 @@ button {
   color: var(--lacre-hi);
 }
 .origin {
-  font-family: var(--display);
   font-style: italic;
   color: var(--muted);
   font-size: 1.05rem !important;
 }
 .learned {
-  margin-top: 1rem;
+  margin-top: 1.4rem;
   background: transparent;
   border: 1px solid var(--line);
   border-radius: 999px;
@@ -1001,7 +1000,7 @@ button {
 
 .foot {
   border-top: 1px solid var(--line);
-  padding: 2rem clamp(16px, 4vw, 56px) 3rem;
+  padding: 2rem var(--gutter) 3rem;
   color: var(--muted);
   font-size: 0.9rem;
   margin-top: 3rem;
@@ -1031,6 +1030,11 @@ button {
   }
 }
 @media (max-width: 560px) {
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6rem;
+  }
   .topbar nav {
     gap: 1.1rem;
   }
@@ -1044,18 +1048,39 @@ button {
   .say {
     font-size: 1.05rem;
   }
-  .inset {
-    font-size: 0.55rem;
-    padding: 0.3rem 0.4rem;
-  }
-  .mini-card {
-    width: 1.5rem;
-    height: 2.1rem;
-    font-size: 0.36rem;
-  }
   .table {
     border-radius: 12px;
     margin: 0 -8px;
+    padding: 6px;
+  }
+  .stage {
+    min-width: 0;
+  }
+  .controls {
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr) 48px;
+    gap: 0.6rem;
+  }
+  .controls input[type='range'] {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    width: 100%;
+  }
+  .controls .sim,
+  .controls .xray {
+    grid-column: 1 / -1;
+  }
+  .controls .xray {
+    justify-content: center;
+  }
+  .cta .btn {
+    flex: 1 1 100%;
+  }
+  .selects select {
+    flex: 1 1 100%;
+  }
+  .filters input[type='search'] {
+    max-width: none;
   }
 }
 @media (prefers-reduced-motion: reduce) {
