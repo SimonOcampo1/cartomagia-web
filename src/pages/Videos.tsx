@@ -38,23 +38,23 @@ export function Videos() {
       <Filters f={f} set={setF} tags={TAGS} count={shown.length}>
         <div className="selects">
           <select value={lang} onChange={(e) => setLang(e.target.value)} aria-label="Idioma">
-            <option value="">Todos los idiomas</option>
+            <option value="">Idioma: todos</option>
             <option value="es">Español</option>
             <option value="en">Inglés</option>
           </select>
           <select value={channel} onChange={(e) => setChannel(e.target.value)} aria-label="Canal">
-            <option value="">Todos los canales</option>
+            <option value="">Canal: todos</option>
             {channels.map((c) => (
               <option key={c}>{c}</option>
             ))}
           </select>
           <select value={origin} onChange={(e) => setOrigin(e.target.value)} aria-label="Origen">
-            <option value="">Todas las fuentes</option>
+            <option value="">Fuente: todas</option>
             <option value="playlist">Tu lista</option>
             <option value="ext">Otros canales</option>
           </select>
           <select value={length} onChange={(e) => setLength(e.target.value)} aria-label="Duración">
-            <option value="">Cualquier duración</option>
+            <option value="">Duración: todas</option>
             <option value="short">Cortos (≤ 3 min)</option>
             <option value="long">Tutoriales largos</option>
           </select>
