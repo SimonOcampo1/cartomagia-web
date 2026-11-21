@@ -14,6 +14,9 @@ export function LessonPage({ id, kind }: { id: string; kind: 'truco' | 'tecnica'
   const vids = [...new Set([...(l.videos ?? []), ...videos.filter((v) => v.links.includes(l.id)).map((v) => v.id)])]
     .map((vid) => videos.find((v) => v.id === vid))
     .filter((v) => v !== undefined)
+  // el tutorial que va junto al tapete: el primero en español, si hay
+  const lead = vids.find((v) => v.lang === 'es') ?? vids[0]
+  const rest = vids.filter((v) => v !== lead)
   const techs = (l.techniques ?? []).map((t) => lessonById[t]).filter(Boolean)
   const usedBy = Object.values(lessonById).filter((x) => x.techniques?.includes(l.id))
 
@@ -45,6 +48,16 @@ export function LessonPage({ id, kind }: { id: string; kind: 'truco' | 'tecnica'
         <Player key={l.id} script={l.script} sim={l.sim} tilt3d={kind === 'tecnica'} />
       ) : (
         <p className="no-anim">Aquí lo importante es el ángulo y el ritmo de las manos, no el orden de las cartas: apréndelo con los videos de abajo.</p>
+      )}
+
+      {lead && (
+        <section className="hands">
+          <VideoEmbed v={lead} />
+          <div>
+            <h2>Con manos reales</h2>
+            <p>{l.script ? 'El tapete enseña el orden de las cartas; el video, el ritmo y el ángulo de las manos.' : 'Mira primero cómo se ve en manos de alguien que ya lo domina.'}</p>
+          </div>
+        </section>
       )}
 
       <div className="lesson-body">
@@ -116,11 +129,11 @@ export function LessonPage({ id, kind }: { id: string; kind: 'truco' | 'tecnica'
         </aside>
       </div>
 
-      {vids.length > 0 && (
+      {rest.length > 0 && (
         <section className="lesson-videos">
           <h2>Videos</h2>
           <div className="video-grid">
-            {vids.map((v) => (
+            {rest.map((v) => (
               <VideoEmbed key={v.id} v={v} />
             ))}
           </div>

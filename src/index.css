@@ -363,6 +363,8 @@ button {
 }
 .zone-label {
   position: absolute;
+  translate: 0 calc(-100% - 0.35em);
+  line-height: 1;
   color: var(--color-ink);
   font-weight: 500;
   transition: opacity var(--dur-short) var(--ease-out);
@@ -1277,6 +1279,7 @@ button {
   color: var(--color-muted);
 }
 .steps {
+  position: relative;
   list-style: none;
   margin: 0;
   padding: 0;
@@ -1327,6 +1330,92 @@ button {
   font-size: var(--text-sm);
 }
 
+/* el tutorial junto al tapete */
+.hands {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: var(--gap-columns);
+  align-items: center;
+  margin-top: var(--space-3xl);
+}
+.hands h2 {
+  font-size: var(--text-2xl);
+  margin-bottom: var(--space-sm);
+}
+.hands p {
+  color: var(--color-ink-2);
+  max-width: 40ch;
+}
+/* pantalla completa: tapete a la izquierda; explicación y pasos a la derecha, todo a la vista */
+html:has(.player.theater) {
+  overflow: hidden;
+}
+.player.theater {
+  --stage-chrome: 140px;
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  margin: 0;
+  padding: var(--space-md);
+  background: var(--color-paper);
+  grid-template-columns: minmax(0, 1fr) clamp(260px, 30vw, 400px);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-areas: 'table caption' 'table steps' 'transport steps';
+  align-items: stretch;
+  gap: var(--space-sm) var(--space-lg);
+}
+.player.theater .player-main {
+  display: contents;
+}
+.player.theater .table {
+  grid-area: table;
+  align-self: center;
+}
+/* aquí manda el alto: sin el ancho mínimo de la ficha, que desbordaría en horizontal */
+.player.theater .stage {
+  min-width: 0;
+}
+.player.theater .transport {
+  grid-area: transport;
+  margin-top: 0;
+}
+.player.theater .caption {
+  grid-area: caption;
+  margin-top: 0;
+  min-height: 0;
+}
+.player.theater .steps-panel {
+  grid-area: steps;
+  position: static;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.player.theater .steps {
+  flex: 1;
+  min-height: 0;
+  max-height: none;
+}
+@media (orientation: portrait) and (max-width: 60rem) {
+  .player.theater {
+    --stage-chrome: 60svh;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto auto minmax(0, 1fr);
+    grid-template-areas: 'table' 'transport' 'caption' 'steps';
+  }
+}
+@media (orientation: landscape) and (max-height: 32rem) {
+  .player.theater {
+    --stage-chrome: 130px;
+    padding: var(--space-xs) var(--space-md);
+  }
+  .player.theater .table {
+    padding: var(--space-xs);
+  }
+  .player.theater .say {
+    font-size: var(--text-md);
+  }
+}
 .lesson-body {
   display: grid;
   grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
@@ -1521,6 +1610,7 @@ button {
 }
 @media (max-width: 60rem) {
   .hero,
+  .hands,
   .head.split,
   .route-panel,
   .sources-cols,

@@ -1,3 +1,4 @@
+import { useReducedMotion } from 'motion/react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { autoAnswer } from '../engine/auto.ts'
 import { rng, short } from '../engine/cards.ts'
@@ -34,6 +35,9 @@ export function Player({ script, sim, tilt3d = false }: { script: ScriptFn; sim?
   const open = !!(frames.at(-1)!.ask && frames.at(-1)!.ask!.answer === undefined) // guion cortado en una pregunta
   const r = useRef(rng(seed))
   const listRef = useRef<HTMLOListElement>(null)
+  const playerRef = useRef<HTMLElement>(null)
+  const [theater, setTheater] = useState(false)
+  const reduce = useReducedMotion()
 
   const answer = (v: string, byTable = false) => {
     if (byTable) setAuto([...auto, answers.length])
@@ -66,6 +70,8 @@ export function Player({ script, sim, tilt3d = false }: { script: ScriptFn; sim?
       else if (e.key === 'ArrowLeft') setIdx(Math.max(i - 1, 0))
       else if (e.key === ' ') setPlaying(!playing)
       else if (e.key.toLowerCase() === 'r') goTo(i)
+      else if (e.key.toLowerCase() === 'f') void toggleTheater()
+      else if (e.key === 'Escape' && theater) void toggleTheater()
       else return
       e.preventDefault()
     }
@@ -73,9 +79,35 @@ export function Player({ script, sim, tilt3d = false }: { script: ScriptFn; sim?
     return () => window.removeEventListener('keydown', onKey)
   })
 
+  // centra el paso actual moviendo solo la lista: scrollIntoView arrastraba la página entera
   useEffect(() => {
-    listRef.current?.querySelector('[aria-current="step"]')?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
-  }, [i])
+    const list = listRef.current
+    const el = list?.querySelector<HTMLElement>('[aria-current="step"]')
+    if (list && el) list.scrollTo({ top: el.offsetTop - (list.clientHeight - el.offsetHeight) / 2, behavior: reduce ? 'auto' : 'smooth' })
+  }, [i, reduce, theater])
+
+  // pantalla completa: el reproductor ocupa toda la pantalla; donde la API no existe (iPhone), igual se superpone
+  const toggleTheater = async () => {
+    const el = playerRef.current!
+    if (theater) {
+      setTheater(false)
+      if (document.fullscreenElement) await document.exitFullscreen().catch(() => {})
+      return
+    }
+    setTheater(true)
+    if (!el.requestFullscreen) return
+    try {
+      await el.requestFullscreen({ navigationUI: 'hide' })
+      await (screen.orientation as ScreenOrientation & { lock?: (o: string) => Promise<void> }).lock?.('landscape')
+    } catch {
+      /* sin pantalla completa o sin bloqueo de orientación: queda la superposición */
+    }
+  }
+  useEffect(() => {
+    const onChange = () => !document.fullscreenElement && setTheater(false)
+    document.addEventListener('fullscreenchange', onChange)
+    return () => document.removeEventListener('fullscreenchange', onChange)
+  }, [])
 
   const restart = (reshuffle: boolean) => {
     if (reshuffle) {
@@ -113,7 +145,7 @@ export function Player({ script, sim, tilt3d = false }: { script: ScriptFn; sim?
   )
 
   return (
-    <section className="player" aria-label="Demostración paso a paso">
+    <section className={`player ${theater ? 'theater' : ''}`} ref={playerRef} aria-label="Demostración paso a paso">
       <div className="player-main">
         <div className={`table ${f.tone ?? ''}`}>
           <Stage
@@ -183,6 +215,16 @@ export function Player({ script, sim, tilt3d = false }: { script: ScriptFn; sim?
                 <Icon name="shuffle" />
               </button>
             )}
+            <button
+              type="button"
+              className="ibtn"
+              aria-pressed={theater}
+              onClick={() => void toggleTheater()}
+              aria-label={theater ? 'Salir de pantalla completa' : 'Pantalla completa'}
+              title="Pantalla completa (F)"
+            >
+              <Icon name={theater ? 'collapse' : 'expand'} />
+            </button>
           </div>
         </div>
 

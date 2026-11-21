@@ -157,7 +157,7 @@ export function Stage({ frame, prev, step = 0, clickable, onPick, xray = true, v
   const slotGeo = slot && pos(frame.geo[slot.zone], slot.at)
 
   return (
-    <div className={`stage ${tilt ? 'tilted' : ''}`} ref={ref} style={{ aspectRatio: `${view.w} / ${view.h}`, maxWidth: `calc((100svh - 300px) * ${view.w / view.h})` }}>
+    <div className={`stage ${tilt ? 'tilted' : ''}`} ref={ref} style={{ aspectRatio: `${view.w} / ${view.h}`, maxWidth: `calc((100svh - var(--stage-chrome, 300px)) * ${view.w / view.h})` }}>
       {u > 0 && (
         <div
           className="camera"
@@ -168,7 +168,7 @@ export function Stage({ frame, prev, step = 0, clickable, onPick, xray = true, v
         >
           {Object.entries(frame.geo).map(([z, g]) =>
             g.label ? (
-              <span key={z} className={`zone-label ${frame.zones[z].length ? '' : 'empty'}`} style={{ left: g.x * u, top: (g.y - 2.6) * u, fontSize: Math.max(11, u * 1.5) }}>
+              <span key={z} className={`zone-label ${frame.zones[z].length ? '' : 'empty'}`} style={{ left: g.x * u, top: (g.y + Math.min(0, (frame.zones[z].length - 1) * (g.dy ?? 0))) * u, fontSize: Math.max(11, u * 1.5) }}>
                 {g.label}
               </span>
             ) : null,
