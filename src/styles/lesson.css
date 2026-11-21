@@ -174,10 +174,11 @@
     display: flex;
     flex-wrap: wrap;
   }
+  /* base de 6rem: el tipo (100%) nunca cabe al lado y siempre baja; sin base 0, ningún dato queda en cero */
   .facts div {
-    flex: 1 1 0;
+    flex: 1 1 6rem;
     min-width: 0;
-    padding: var(--space-md) 0 var(--space-md) var(--space-sm);
+    padding: var(--space-md) var(--space-sm);
   }
   .facts dd {
     font-size: var(--text-md);
