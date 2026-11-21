@@ -1,4 +1,4 @@
-import { between, card, isRed, longName, newDeck, short, shuffled, valueOf, type CardId, type Suit } from '../engine/cards.ts'
+import { between, card, isRed, longName, newDeck, RANKS, short, shuffled, valueOf, type CardId, type Suit } from '../engine/cards.ts'
 import { CENTER, row, stack, type Geo, type Script } from '../engine/scene.ts'
 
 const deck = (s: Script) => shuffled(newDeck(), s.r)
@@ -659,4 +659,300 @@ export function downUnder(s: Script) {
   }
   s.flipCard(survivor, true)
   s.snap(`Queda la que estaba en la posición ${pos}: con ${n} cartas siempre es esa.`, { tone: 'win' })
+}
+
+/* ───────────── Trucos (segunda tanda) ───────────── */
+
+export function reloj(s: Script) {
+  const d = deck(s)
+  for (let h = 1; h <= 12; h++) {
+    const a = (h / 12) * 2 * Math.PI
+    s.zone(`h${h}`, { x: 46 + Math.sin(a) * 34, y: 25 - Math.cos(a) * 22, label: String(h) }, [d[h]])
+  }
+  s.snap('Doce cartas boca abajo en círculo, como las horas de un reloj.')
+  const n = +s.ask({ kind: 'choice', prompt: 'El espectador piensa una hora del 1 al 12', options: opts([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]) })
+  const at = (h: number) => s.pile(`h${h}`)[0]
+  s.snap(`Pensó las ${n}. Le pides que cuente en silencio cada toque tuyo, empezando por el número siguiente (${n + 1}), y que diga «stop» al llegar a 20.`)
+  for (let k = 1; k <= 7; k++) s.mark(at(between(s.r, 1, 12)), 'path')
+  s.snap('Los siete primeros toques, donde quieras: no importan.')
+  for (let k = 8; k <= 20 - n; k++) s.mark(at(12 - (k - 8)), 'path')
+  s.snap('Desde el octavo toque: las 12, las 11, las 10… siempre hacia atrás.', {
+    note: `El toque 8 cae en las 12; el toque k cae en 20 − k. Su «stop» llega en el toque ${20 - n}, que cae en 20 − ${20 - n} = ${n}.`,
+  })
+  const got = at(n)
+  s.mark(got, 'chosen')
+  s.flipCard(got, true)
+  s.snap(`«¡Stop!»: tu dedo está en las ${n}, justo su hora.`, { tone: 'win' })
+}
+
+const SPELL: [string, string][] = [
+  ['A', 'AS'], ['2', 'DOS'], ['3', 'TRES'], ['4', 'CUATRO'], ['5', 'CINCO'], ['6', 'SEIS'], ['7', 'SIETE'],
+  ['8', 'OCHO'], ['9', 'NUEVE'], ['10', 'DIEZ'], ['J', 'JOTA'], ['Q', 'REINA'], ['K', 'REY'],
+]
+
+export function deletreo(s: Script) {
+  // la preparación sale de jugar el reparto al revés: qué posición sale con cada palabra
+  const q = SPELL.map((_, i) => i)
+  const top: CardId[] = []
+  for (const [r, w] of SPELL) {
+    for (let i = 1; i < w.length; i++) q.push(q.shift()!)
+    top[q.shift()!] = r + 'S'
+  }
+  s.zone('paquete', stack(46, 6), [...top].reverse())
+  s.zone('mesa', row(4, 36, 7))
+  s.snap('Preparación: las trece picas en un orden que parece al azar.', { note: `De arriba a abajo: ${top.map(short).join(' ')}` })
+  let ok = true
+  for (const [r, w] of SPELL) {
+    for (let i = 1; i < w.length; i++) s.move('paquete', 'paquete', 1, { toBottom: true })
+    const got = s.move('paquete', 'mesa', 1, { up: true })[0]
+    ok &&= got === r + 'S'
+    s.snap(`«${[...w].join('-')}»: una carta abajo por letra y, con la última, das vuelta ${short(got)}.`)
+  }
+  s.snap(ok ? 'Las trece salen en orden, del as al rey, cada una en su última letra.' : 'Se desordenó.', { tone: ok ? 'win' : 'fail' })
+}
+
+export function matrimonios(s: Script) {
+  const order = ['KS', 'KH', 'KC', 'KD', 'QS', 'QH', 'QC', 'QD'] // de arriba a abajo
+  s.zone('paquete', stack(46, 4), [...order].reverse())
+  s.inset = { label: 'De arriba a abajo', cards: order }
+  s.snap('Preparación: los cuatro reyes y debajo las cuatro reinas, con los palos en el mismo orden.')
+  s.inset = undefined
+  const k = +s.ask({ kind: 'choice', prompt: '¿Cuántas veces corta el espectador?', options: opts([1, 2, 3, 4, 5]) })
+  for (let i = 0; i < k; i++) s.cut('paquete', between(s.r, 1, 7))
+  s.snap(`Corta ${k === 1 ? 'una vez' : `${k} veces`}, completando el corte. «Reyes y reinas se separan».`, {
+    note: 'Un ciclo de 8 con período 4: cada reina queda siempre 4 cartas por debajo de su rey, corte lo que corte.',
+  })
+  const P = ['p0', 'p1', 'p2', 'p3']
+  P.forEach((p, i) => s.zone(p, { x: 8 + i * 23, y: 30, dx: 9.5, dy: 0, label: `Montón ${i + 1}` }))
+  s.deal('paquete', P, 8)
+  s.snap('Reparte en cuatro montones, de izquierda a derecha, dos vueltas.')
+  P.forEach((p) => s.pile(p).forEach((c) => s.flipCard(c, true)))
+  const ok = P.every((p) => {
+    const [a, b] = s.pile(p)
+    return a.slice(-1) === b.slice(-1) && a[0] !== b[0]
+  })
+  s.snap(ok ? 'Cada rey encontró a su reina del mismo palo.' : 'Se desordenó.', { tone: ok ? 'win' : 'fail' })
+}
+
+const upTo10 = (c: CardId) => Math.min(10, valueOf(c))
+
+export function tresMontones(s: Script) {
+  s.zone('mazo', stack(84, 6), deck(s))
+  s.snap('Das el mazo mezclado al espectador y te das vuelta.')
+  let sum = 0
+  for (let p = 0; p < 3; p++) {
+    s.zone(`p${p}`, { x: 6 + p * 22, y: 6, dx: 0, dy: 1.1, label: `Montón ${p + 1}` })
+    const first = s.move('mazo', `p${p}`, 1, { up: true })[0]
+    const v = upTo10(first)
+    sum += v
+    s.deal('mazo', [`p${p}`], 10 - v, { up: true })
+    s.snap(`Montón ${p + 1}: da vuelta ${short(first)} y cuenta desde ${v} hasta 10, una carta por número.`, {
+      note: p === 0 ? 'Las figuras valen 10: ese montón se queda en una sola carta.' : undefined,
+    })
+    s.turnOver(`p${p}`)
+  }
+  s.snap('Da vuelta cada montón: la primera carta queda arriba, boca abajo.')
+  s.zone('resto', stack(30, 40, 'Sobrantes'))
+  s.move('mazo', 'resto', 52, { block: true })
+  const rem = s.pile('resto').length
+  s.snap(`Vuelves y tomas las sobrantes. Cuentas ${rem}; menos 19 da ${rem - 19}.`, {
+    note: 'Cada montón gasta 11 − su valor. Tres montones gastan 33 − suma, así que sobran 19 + suma.',
+  })
+  const tops = ['p0', 'p1', 'p2'].map((p) => s.top(p)[0])
+  tops.forEach((c) => s.flipCard(c, true))
+  s.mark(tops, 'chosen')
+  s.snap(`«Las tres suman ${rem - 19}». Dan vuelta: ${tops.map(short).join(' + ')} = ${sum}.`, { tone: rem - 19 === sum ? 'win' : 'fail' })
+}
+
+export function sandwich(s: Script) {
+  const [J1, J2] = ['JH', 'JD']
+  s.zone('mazo', stack(30, 22), [J2, ...shuffled(newDeck().filter((c) => c !== J1 && c !== J2), s.r)])
+  s.up[J2] = true
+  s.mark([J1, J2], 'key')
+  s.zone('jota', stack(66, 8, 'Testigo'), [J1], true)
+  s.snap('Preparación: la J♦ boca arriba abajo del mazo. Solo muestras la J♥.')
+  const chosen = s.pile('mazo')[between(s.r, 15, 35)]
+  s.zone('espectador', stack(66, 34, 'Su carta'))
+  s.take(chosen, 'espectador', { up: true })
+  s.mark(chosen, 'chosen')
+  s.snap(`El espectador saca una carta y la memoriza: ${longName(chosen)}.`)
+  s.take(J1, 'mazo', { up: true })
+  s.snap('La J♥ va boca arriba encima del mazo, «de testigo».')
+  s.take(chosen, 'mazo', { up: false })
+  s.snap('Su carta, boca abajo, encima de la jota.')
+  const n = +s.ask({
+    kind: 'choice',
+    prompt: 'El espectador corta y completa el corte',
+    options: [{ label: 'Poco', value: '10' }, { label: 'Por la mitad', value: '26' }, { label: 'Mucho', value: '42' }],
+  })
+  s.cut('mazo', n)
+  s.snap('Al completar el corte, la jota escondida cae justo encima de su carta.')
+  s.place('mazo', { x: 4, y: 24, dx: 1.65, dy: 0 })
+  s.snap('Extiende boca abajo: aparecieron dos jotas boca arriba con una carta atrapada.')
+  s.flipCard(chosen, true)
+  const p = s.pile('mazo')
+  const ok = p[p.indexOf(J2) - 1] === chosen && p[p.indexOf(chosen) - 1] === J1
+  s.snap(ok ? `La carta del sándwich: ${longName(chosen)}.` : 'Algo se desordenó.', { tone: ok ? 'win' : 'fail' })
+}
+
+export function monte(s: Script) {
+  const [x1, x2] = shuffled(newDeck().filter((c) => !isRed(c) && valueOf(c) < 11), s.r)
+  const Q = 'QH'
+  const Z = ['z0', 'z1', 'z2']
+  ;[x1, Q, x2].forEach((c, i) => s.zone(Z[i], stack(20 + i * 26, 34), [c], true))
+  s.mark(Q, 'chosen')
+  s.snap('Tres cartas: la dama de corazones y dos negras. «Sigue a la dama».')
+  for (const c of [x1, Q, x2]) s.flipCard(c, false)
+  s.snap('Las das vuelta.')
+  s.zone('mano', { x: 46, y: 8, dx: 0, dy: -1.2 })
+  s.hands = { r: { x: 50, y: 6, grip: 'above' } }
+  s.take(Q, 'mano')
+  s.take(x2, 'mano')
+  s.snap('La derecha toma la dama y encima una negra, de los extremos, un poco escalonadas.', {
+    inset: { label: 'El público ve la de abajo', cards: [Q] },
+  })
+  s.take(x2, 'z1')
+  s.snap('Lanzas al centro. Todos creen ver caer la de abajo, la dama. Cae la de arriba.', {
+    note: 'Lanzamiento falso (hype): el pulgar suelta la de arriba con el mismo gesto con que soltaría la de abajo.',
+  })
+  s.take(Q, 'z2')
+  s.hands = undefined
+  s.snap('La segunda va a la derecha. «¿Dónde está la dama?» Todos señalan el centro.')
+  s.flipCard(x2, true)
+  s.mark(x2, 'dim')
+  s.snap('El centro es una negra.')
+  s.flipCard(Q, true)
+  s.snap('La dama estaba a la derecha.', { tone: 'win' })
+}
+
+export function mazoInvisible(s: Script) {
+  s.zone('mazo', stack(46, 6), deck(s))
+  s.snap('Ofreces un mazo «invisible»: el espectador lo mezcla en el aire y da vuelta una carta imaginaria.')
+  const suit = s.ask({
+    kind: 'choice',
+    prompt: 'Que nombre el palo de su carta',
+    options: [['Picas', 'S'], ['Corazones', 'H'], ['Tréboles', 'C'], ['Diamantes', 'D']].map(([label, value]) => ({ label, value })),
+  })
+  const rank = s.ask({ kind: 'choice', prompt: 'Y su valor', options: RANKS.map((r) => ({ label: r, value: r })) })
+  const named = rank + suit
+  s.take(named, 'mazo', { at: 26 })
+  s.snap(`${longName(named)}. Sacas el mazo real del estuche, del lado que corresponde.`, {
+    note: 'Las cartas van pegadas de a pares, una mirando hacia cada lado. Según la carta nombrada, giras el mazo o no al sacarlo: la nombrada siempre queda al revés.',
+  })
+  s.place('mazo', { x: 4, y: 30, dx: 1.65, dy: 0 })
+  s.flipCard(named, true)
+  s.mark(named, 'chosen')
+  s.snap(`Extiendes: una sola carta boca arriba, ${longName(named)}. La que «dio vuelta» en el mazo invisible.`, { tone: 'win' })
+}
+
+export function fueraDeEsteMundo(s: Script) {
+  const reds = shuffled(newDeck().filter(isRed), s.r)
+  const blacks = shuffled(newDeck().filter((c) => !isRed(c)), s.r)
+  const [r1, r2] = reds.splice(0, 2)
+  const [b1, b2] = blacks.splice(0, 2)
+  const leaders = [r1, b1, r2, b2]
+  s.zone('mazo', stack(46, 4), [...blacks, ...reds])
+  s.zone('lideres', row(66, 4, 5), leaders, true)
+  s.mark(leaders, 'key')
+  s.snap('Preparación: rojas arriba, negras abajo. Sacas dos rojas y dos negras para que guíen.')
+  s.zone('L', { x: 22, y: 24, dx: 0, dy: 0.35, label: 'Izquierda' })
+  s.zone('R', { x: 62, y: 24, dx: 0, dy: 0.35, label: 'Derecha' })
+  s.take(r1, 'L')
+  s.take(b1, 'R')
+  s.snap('Una roja boca arriba a la izquierda, una negra a la derecha.')
+  for (let i = 0; i < 24; i++) s.move('mazo', s.r() < 0.5 ? 'L' : 'R', 1)
+  s.snap('El espectador reparte boca abajo, a intuición: si siente roja, a la izquierda; si negra, a la derecha.', {
+    note: 'Todas las que reparte ahora son rojas. Él no lo sabe.',
+  })
+  s.take(b2, 'L')
+  s.take(r2, 'R')
+  s.snap('«Cambiemos para ponerlo difícil»: ahora una negra a la izquierda y una roja a la derecha.')
+  for (let i = 0; i < 24; i++) s.move('mazo', s.r() < 0.5 ? 'L' : 'R', 1)
+  s.snap('Sigue repartiendo a intuición. Ahora todas son negras.')
+  const R = s.pile('R')
+  const [i, j] = [R.indexOf(b1), R.indexOf(r2)]
+  ;[R[i], R[j]] = [R[j], R[i]]
+  s.flipCard(b1, true)
+  s.flipCard(r2, true)
+  s.snap('Mientras revelas el montón izquierdo, en el derecho cambias de lugar sus dos guías.', {
+    note: 'Las guías son las únicas cartas boca arriba: moverlas al extender parece ordenar, no hacer trampa.',
+  })
+  for (const [z, y] of [['L', 12], ['R', 36]] as const) {
+    s.place(z, { x: 4, y, dx: Math.min(3.4, 84 / Math.max(1, s.pile(z).length - 1)), dy: 0 })
+    s.pile(z).forEach((c) => s.flipCard(c, true))
+  }
+  let ok = true
+  for (const z of ['L', 'R']) {
+    let red = false
+    for (const c of s.pile(z)) {
+      if (leaders.includes(c)) red = isRed(c)
+      else ok &&= isRed(c) === red
+    }
+  }
+  s.snap(ok ? 'Extiendes los dos montones: cada carta bajo la guía de su color. Las 48.' : 'No coincide.', { tone: ok ? 'win' : 'fail' })
+}
+
+export function triunfo(s: Script) {
+  s.zone('mazo', CENTER, deck(s))
+  const chosen = s.pile('mazo')[26]
+  s.zone('espectador', stack(78, 24, 'Su carta'))
+  s.take(chosen, 'espectador', { up: true })
+  s.mark(chosen, 'chosen')
+  s.snap('El espectador elige una carta y la memoriza.')
+  s.take(chosen, 'mazo', { up: false })
+  s.snap('La devuelve y la controlas arriba.', { note: 'Mira «Control con mezcla» en Técnicas.' })
+  s.zone('A', { ...stack(22, 24), rot: -6 })
+  s.zone('B', { ...stack(70, 24), rot: 6 })
+  s.move('mazo', 'A', 26, { block: true })
+  s.move('mazo', 'B', 26, { block: true })
+  s.snap('Corta por la mitad.')
+  s.turnOver('A')
+  s.snap('Das vuelta la mitad de arriba: queda boca arriba, con su carta abajo del todo.')
+  s.flipCard(chosen, false)
+  s.snap('Al cuadrarla, giras en secreto esa carta de abajo.', { note: 'Es la misma inversión de «La carta que se da vuelta».' })
+  const half = new Set(s.pile('A'))
+  s.riffle('A', 'B', 'mazo')
+  s.snap('Mezcla americana: la mitad boca arriba con la boca abajo.')
+  s.place('mazo', { x: 4, y: 24, dx: 1.65, dy: 0 })
+  s.snap('Extiende para que vean el caos: caras y dorsos mezclados.')
+  s.place('mazo', { x: 46, y: 24, dx: 0.035, dy: -0.035 })
+  s.zone('strip', stack(46, 6))
+  for (const c of [...s.pile('mazo')]) if (half.has(c)) s.take(c, 'strip')
+  s.snap('Al cuadrar, sacas de un tirón las cartas de la mitad boca arriba: el strip-out.', {
+    note: 'Tras una americana las mitades quedan escalonadas; se separan empujando de punta a punta.',
+  })
+  s.turnOver('strip')
+  s.move('strip', 'mazo', 52, { block: true })
+  s.snap('Las das vuelta y las dejas encima. Chasquido de dedos.')
+  s.place('mazo', { x: 4, y: 24, dx: 1.65, dy: 0 })
+  const p = s.pile('mazo')
+  const ok = p.every((c) => s.up[c] === (c === chosen))
+  s.snap(ok ? `Todo el mazo se enderezó, menos una carta: ${longName(chosen)}.` : 'No salió.', { tone: ok ? 'win' : 'fail' })
+}
+
+/* ───────────── Técnicas (segunda tanda) ───────────── */
+
+export function faro(s: Script) {
+  const start = newDeck().reverse() // de abajo a arriba: el as de picas queda arriba
+  s.zone('mazo', { x: 4, y: 36, dx: 1.65, dy: 0, label: 'Mazo boca arriba' }, start, true)
+  s.zone('A', stack(30, 6, 'Mitad de arriba'))
+  s.zone('B', stack(58, 6, 'Mitad de abajo'))
+  s.snap('Un mazo en orden de fábrica, boca arriba.')
+  for (let k = 1; k <= 8; k++) {
+    s.move('mazo', 'A', 26, { block: true })
+    s.move('mazo', 'B', 26, { block: true })
+    for (let i = 0; i < 26; i++) {
+      s.move('B', 'mazo', 1, { fromBottom: true })
+      s.move('A', 'mazo', 1, { fromBottom: true })
+    }
+    s.snap(
+      k === 1
+        ? 'Faro exterior: cortas exactamente 26 y 26 y las entrelazas carta a carta; la de arriba sigue arriba.'
+        : k === 8
+          ? 'Octavo faro…'
+          : `Faro ${k}. Parece mezclado, pero cada carta sigue una regla fija.`,
+    )
+  }
+  const ok = s.pile('mazo').every((c, i) => c === start[i])
+  s.snap(ok ? 'Tras ocho faros exteriores, el mazo vuelve al orden de fábrica.' : 'No volvió.', { tone: ok ? 'win' : 'fail' })
 }

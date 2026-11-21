@@ -105,6 +105,13 @@
 .tips li::marker {
   color: var(--color-accent-hi);
 }
+.variants li {
+  margin: var(--space-sm) 0;
+}
+.variant-level {
+  color: var(--color-muted);
+  font-size: var(--text-md);
+}
 .lesson-body .origin {
   margin-top: var(--space-lg);
   color: var(--color-muted);

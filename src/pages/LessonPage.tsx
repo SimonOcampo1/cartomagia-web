@@ -92,6 +92,20 @@ export function LessonPage({ id, kind }: { id: string; kind: 'truco' | 'tecnica'
               </ul>
             </>
           )}
+          {l.variants && (
+            <>
+              <h3>Variantes</h3>
+              <ul className="tips variants">
+                {l.variants.map((v) => (
+                  <li key={v.name}>
+                    <strong>{v.name}</strong> <span className="variant-level">{LEVEL_NAME[v.level]}</span>
+                    <br />
+                    {v.text}
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
           {l.origin && <p className="origin">{l.origin}</p>}
           <button type="button" className={`learned ${learned.has(l.id) ? 'on' : ''}`} aria-pressed={learned.has(l.id)} onClick={() => toggle(l.id)}>
             {learned.has(l.id) ? (

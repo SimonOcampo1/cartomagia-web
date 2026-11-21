@@ -18,12 +18,12 @@
   <a href="#puesta-en-marcha">Puesta en marcha</a>
 </p>
 
-Escuela de cartomagia en español: 17 trucos y 18 técnicas, de los automáticos que hace cualquiera al pase clásico. Cada uno se ve paso a paso sobre un tapete animado con cartas reales, y en los automáticos el tapete reparte de verdad: tú eliges la carta y el truco tiene que funcionar.
+Escuela de cartomagia en español: 31 trucos y 24 técnicas, de los automáticos que hace cualquiera al pase clásico. Muchas fichas traen variantes con su propio nivel, para seguir creciendo con el mismo efecto. Cada uno se ve paso a paso sobre un tapete animado con cartas reales, y en los automáticos el tapete reparte de verdad: tú eliges la carta y el truco tiene que funcionar.
 
 ## Características
 
 - **Trucos como guiones que se ejecutan.** Un truco es una función que mueve cartas entre zonas y congela cada paso con `snap()`. Cuando hace falta una decisión del espectador, `ask()` deja el paso con la pregunta y corta el guion hasta que respondes; con tu respuesta el guion se vuelve a correr desde el principio con la misma semilla.
-- **Cada simulación se prueba.** `npm run check` corre los 26 guiones 200 veces con mezclas distintas, respondiendo como un espectador honesto, y falla si alguno no termina en éxito.
+- **Cada simulación se prueba.** `npm run check` corre los 36 guiones 200 veces con mezclas distintas, respondiendo como un espectador honesto, y falla si alguno no termina en éxito.
 - **Un tapete que se lee.** Las cartas viajan por encima del paquete y se posan. Cuando una entra o sale en medio de una pila, las de encima se abren como un libro para mostrar el punto exacto. La visión de mago marca la carta elegida y las cartas clave, y el encuadre se ajusta a lo que ocupa cada truco.
 - **Pantalla completa para practicar.** El tapete y los controles quedan a un lado, la explicación y la lista de pasos al otro, sin scroll. En Android intenta girar la pantalla a horizontal; en iPhone, donde no existe la API, el reproductor igual cubre la página.
 - **Videoteca de 141 tutoriales.** Salen de una playlist de YouTube (bajada con yt-dlp) más 55 elegidos de otros canales, clasificados por nivel y tipo de truco. YouTube no carga hasta que tocas el video, y cuando carga usa `youtube-nocookie`.

@@ -48,6 +48,8 @@ export const TAG_NAME: Record<Tag, string> = {
   short: 'Short',
 }
 
+export type Variant = { name: string; level: Level; text: string }
+
 export type Link = { label: string; url: string; lang?: 'es' | 'en' }
 
 export type Lesson = {
@@ -60,6 +62,7 @@ export type Lesson = {
   minutes?: number
   techniques?: string[] // ids de técnicas
   tips?: string[]
+  variants?: Variant[] // otras versiones del mismo efecto, cada una con su nivel
   origin?: string
   script?: ScriptFn
   sim?: boolean // usa mezcla aleatoria: muestra "nueva mezcla"
