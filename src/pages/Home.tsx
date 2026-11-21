@@ -37,7 +37,6 @@ function Hero() {
   return (
     <section className="hero">
       <div className="hero-copy">
-        <p className="kicker">Escuela de cartomagia</p>
         <h1>
           Aprende a hacer magia con un mazo, <em>de la primera carta al pase clásico.</em>
         </h1>
@@ -92,7 +91,7 @@ export function Home() {
         {(['P', 'I', 'A'] as Level[]).map((lv, n) => (
           <div key={lv} className={`level lv-${lv}`}>
             <div className="level-head">
-              <span className="level-num">{['I', 'II', 'III'][n]}</span>
+              <span className="level-num">{['01', '02', '03'][n]}</span>
               <h3>{LEVEL_NAME[lv]}</h3>
               <p>{LEVEL_BLURB[lv]}</p>
             </div>

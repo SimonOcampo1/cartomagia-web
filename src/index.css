@@ -1,4 +1,4 @@
-/* Tapete: salón nocturno. Tinta verde-negra, paño de mesa, marfil de naipe, lacre y latón. */
+/* Tapete: salón nocturno, minimal. Una sola familia (Funnel), tinta verde-negra, paño, marfil y lacre. */
 :root {
   --ink: oklch(0.17 0.018 162);
   --ink-2: oklch(0.21 0.022 162);
@@ -15,8 +15,8 @@
   --cool: oklch(0.78 0.09 225);
   --card-black: oklch(0.22 0.015 260);
   --win: oklch(0.8 0.12 150);
-  --display: 'Gloock', 'Georgia', serif;
-  --body: 'Schibsted Grotesk', system-ui, sans-serif;
+  --display: 'Funnel Display', system-ui, sans-serif;
+  --body: 'Funnel Sans', system-ui, sans-serif;
   --wrap: 1200px;
   --gutter: max(clamp(16px, 4vw, 56px), calc((100% - var(--wrap)) / 2));
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
@@ -56,9 +56,9 @@ h1,
 h2,
 h3 {
   font-family: var(--display);
-  font-weight: 400;
-  line-height: 1.08;
-  letter-spacing: -0.01em;
+  font-weight: 500;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
   margin: 0;
   text-wrap: balance;
 }
@@ -99,7 +99,8 @@ button {
   flex-wrap: wrap;
 }
 .brand {
-  font: 400 1.75rem/1 var(--display);
+  font: 600 1.6rem/1 var(--display);
+  letter-spacing: -0.04em;
   color: var(--paper);
   text-decoration: none;
   display: flex;
@@ -107,10 +108,8 @@ button {
   gap: 0.7rem;
 }
 .brand span {
-  font: 500 0.72rem/1 var(--body);
-  font-style: normal;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  font: 400 0.9rem/1 var(--body);
+  letter-spacing: 0;
   color: var(--muted);
 }
 .topbar nav {
@@ -142,18 +141,16 @@ button {
   padding: clamp(32px, 6vw, 88px) var(--gutter) clamp(40px, 6vw, 80px);
 }
 .kicker {
-  font-size: 0.75rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
+  font-size: 0.95rem;
   color: var(--lacre-hi);
   margin: 0 0 1.2rem;
-  font-weight: 700;
+  font-weight: 500;
 }
 .hero h1 {
   font-size: clamp(2.3rem, 4.4vw, 4.1rem);
 }
 .hero h1 em {
-  color: var(--brass);
+  color: var(--muted);
   font-style: normal;
 }
 .lead {
@@ -204,9 +201,7 @@ button {
 }
 .hero-table figcaption span {
   display: block;
-  font-size: 0.7rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
+  font-size: 0.85rem;
   color: var(--muted);
   margin-bottom: 0.25rem;
 }
@@ -362,9 +357,7 @@ button {
 .zone-label {
   position: absolute;
   color: oklch(0.85 0.03 120 / 0.7);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  font-weight: 700;
+  font-weight: 500;
   white-space: nowrap;
   pointer-events: none;
 }
@@ -400,11 +393,9 @@ button {
   flex-wrap: wrap;
   gap: 0.4rem 0.5rem;
   margin: 0 0 0.6rem;
-  font-size: 0.72rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  font-size: 0.85rem;
   color: var(--muted);
-  font-weight: 700;
+  font-weight: 500;
 }
 .inset > span:first-child {
   margin-right: 0.3rem;
@@ -412,9 +403,9 @@ button {
 .mini-card {
   position: relative;
   display: inline-block;
-  width: 2.2rem;
-  height: 3.08rem;
-  font-size: 0.52rem;
+  width: 2.8rem;
+  height: 3.92rem;
+  font-size: 0.66rem;
   text-transform: none;
   letter-spacing: 0;
 }
@@ -432,7 +423,7 @@ button {
   min-height: 5.5rem;
 }
 .step {
-  font: 400 1.6rem/1 var(--display);
+  font: 500 1.6rem/1 var(--display);
   color: var(--brass);
   white-space: nowrap;
 }
@@ -470,7 +461,7 @@ button {
   border: 0;
   border-radius: 999px;
   padding: 0.55rem 1.05rem;
-  font-weight: 700;
+  font-weight: 600;
   min-height: 44px;
   transition: background 0.2s var(--ease), transform 0.2s var(--ease);
 }
@@ -508,7 +499,7 @@ button {
 .controls button.primary {
   background: var(--lacre);
   border-color: var(--lacre);
-  font-weight: 700;
+  font-weight: 600;
   min-width: 8.5rem;
 }
 .controls button.primary:hover:not(:disabled) {
@@ -570,7 +561,8 @@ button {
   align-self: start;
 }
 .level-num {
-  font: 400 3.6rem/1 var(--display);
+  font: 500 0.95rem/1 var(--body);
+  font-variant-numeric: tabular-nums;
   color: var(--lacre-hi);
 }
 .level-head h3 {
@@ -610,11 +602,9 @@ button {
 }
 .lesson-row .lv {
   grid-area: lv;
-  font-size: 0.7rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  font-weight: 700;
-  padding-top: 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding-top: 0.3rem;
 }
 .lv-P .lv,
 .lvtag.lv-P {
@@ -630,12 +620,11 @@ button {
 }
 .lesson-row .name {
   grid-area: name;
-  font: 400 1.3rem/1.25 var(--display);
+  font: 500 1.3rem/1.2 var(--display);
+  letter-spacing: -0.02em;
 }
 .done {
-  font: 700 0.65rem/1 var(--body);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  font: 500 0.75rem/1 var(--body);
   color: var(--win);
   border: 1px solid currentColor;
   border-radius: 999px;
@@ -676,15 +665,15 @@ button {
   border-bottom: 1px solid oklch(0.3 0.02 150);
 }
 .books li::before {
-  content: counter(b, upper-roman);
+  content: counter(b, decimal-leading-zero);
   position: absolute;
   left: 0;
   top: 0.9rem;
-  font: 400 1.2rem/1.3 var(--display);
+  font: 500 1.2rem/1.3 var(--display);
   color: var(--lacre-hi);
 }
 .books cite {
-  font: 400 1.25rem/1.3 var(--display);
+  font: 500 1.25rem/1.3 var(--display);
   font-style: normal;
   color: var(--paper);
 }
@@ -719,7 +708,10 @@ button {
 .filters {
   margin: 2rem 0 1rem;
   display: grid;
-  gap: 0.8rem;
+  gap: 0.6rem;
+}
+.filters input[type='search'] {
+  margin-bottom: 0.4rem;
 }
 .filters input[type='search'] {
   width: 100%;
@@ -742,19 +734,21 @@ button {
   background: transparent;
   border: 1px solid var(--line);
   border-radius: 999px;
-  padding: 0 0.95rem;
+  padding: 0 0.9rem;
   font-size: 0.9rem;
-  min-height: 40px;
+  font-weight: 500;
+  min-height: 38px;
+  color: var(--muted);
   transition: background 0.15s var(--ease), border-color 0.15s var(--ease), color 0.15s var(--ease);
 }
 .chip:hover {
   border-color: var(--muted);
+  color: var(--text);
 }
 .chip[aria-pressed='true'] {
   background: var(--paper);
   color: var(--ink);
   border-color: var(--paper);
-  font-weight: 700;
 }
 .selects {
   display: flex;
@@ -765,8 +759,10 @@ button {
   background: var(--ink-2);
   border: 1px solid var(--line);
   border-radius: 10px;
-  padding: 0.5rem 0.8rem;
-  min-height: 44px;
+  padding: 0.4rem 0.75rem;
+  min-height: 40px;
+  font-size: 0.9rem;
+  color: var(--text);
 }
 .toggle {
   display: flex;
@@ -822,10 +818,8 @@ button {
   color: var(--muted);
 }
 .lvtag {
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  font-size: 0.75rem;
+  font-weight: 600;
+  font-size: 0.85rem;
 }
 .no-anim {
   margin: 2rem 0;
@@ -873,7 +867,7 @@ button {
   color: var(--lacre-hi);
 }
 .origin {
-  font-style: italic;
+  color: var(--muted);
   color: var(--muted);
   font-size: 1.05rem !important;
 }
@@ -884,7 +878,7 @@ button {
   border-radius: 999px;
   padding: 0.6rem 1.2rem;
   min-height: 44px;
-  font-weight: 700;
+  font-weight: 600;
 }
 .learned:hover {
   border-color: var(--win);
@@ -1031,12 +1025,12 @@ button {
 }
 @media (max-width: 560px) {
   .topbar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.6rem;
+    flex-wrap: nowrap;
+    align-items: center;
   }
   .topbar nav {
-    gap: 1.1rem;
+    gap: 1rem;
+    font-size: 0.95rem;
   }
   .brand span {
     display: none;
@@ -1084,14 +1078,12 @@ button {
     min-width: 0;
   }
   .chips {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    margin: 0 -16px;
-    padding: 0 16px;
-    scrollbar-width: none;
+    gap: 0.4rem;
   }
   .chip {
-    flex: none;
+    min-height: 36px;
+    padding: 0 0.8rem;
+    font-size: 0.875rem;
   }
   .filters input[type='search'] {
     max-width: none;
