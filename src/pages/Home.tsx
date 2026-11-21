@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { MiniCard, Stage, viewOf } from '../components/Stage.tsx'
-import { rng } from '../engine/cards.ts'
-import { run } from '../engine/scene.ts'
-import { corteCruzado } from '../data/scripts.ts'
+import { runAuto } from '../engine/auto.ts'
+import { veintiuna } from '../data/scripts.ts'
 import { techniques, tricks } from '../data/lessons.ts'
 import { LEVEL_NAME, yt, type Level } from '../data/types.ts'
 import { videos } from '../data/videos.ts'
@@ -26,10 +25,10 @@ const CHANNELS = ['Julio Ribera', 'Santi Marcilla', 'A Million Card Tricks', 'Ma
 
 function Hero() {
   const [seed, setSeed] = useState(7)
-  const frames = useMemo(() => run(corteCruzado, [], rng(seed)), [seed])
+  const frames = useMemo(() => runAuto(veintiuna, seed), [seed])
   const [i, setI] = useState(0)
   useEffect(() => {
-    const t = setTimeout(() => (i < frames.length - 1 ? setI(i + 1) : (setI(0), setSeed(seed + 1))), i === frames.length - 1 ? 4000 : 2000)
+    const t = setTimeout(() => (i < frames.length - 1 ? setI(i + 1) : (setI(0), setSeed(seed + 1))), i === frames.length - 1 ? 4500 : 1700)
     return () => clearTimeout(t)
   }, [i, frames.length, seed])
   const view = useMemo(() => viewOf(frames), [frames])
@@ -54,10 +53,10 @@ function Hero() {
       </div>
       <figure className="hero-table">
         <div className={`table ${f.tone ?? ''}`}>
-          <Stage frame={f} view={view} />
+          <Stage frame={f} prev={frames[i - 1]} step={i} view={view} />
         </div>
         <figcaption>
-          <span>Ahora en el tapete · Predicción con corte cruzado</span>
+          <span>Ahora en el tapete · Las 21 cartas, paso {i + 1} de {frames.length}</span>
           {f.caption}
           {f.inset && (
             <span className="inset">

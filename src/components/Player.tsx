@@ -1,62 +1,193 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { autoAnswer } from '../engine/auto.ts'
 import { rng, short } from '../engine/cards.ts'
-import { run, type ScriptFn } from '../engine/scene.ts'
+import { run, type Frame, type ScriptFn } from '../engine/scene.ts'
+import { Icon } from './Icons.tsx'
 import { MiniCard, Stage, viewOf } from './Stage.tsx'
 
 const newSeed = () => Math.floor(Math.random() * 1e9)
+const SPEEDS = [0.5, 1, 1.5, 2]
+/** Lo que dura un paso en pantalla: más texto, más tiempo para leerlo. */
+const dwell = (f: Frame, speed: number) => Math.max(1900, 1000 + f.caption.length * 26) / speed
 
-export function Player({ script, sim }: { script: ScriptFn; sim?: boolean }) {
+const answerLabel = (f: Frame) => {
+  const a = f.ask!
+  return a.kind === 'card' ? short(a.answer!) : a.options.find((o) => o.value === a.answer)?.label
+}
+
+export function Player({ script, sim, tilt3d = false }: { script: ScriptFn; sim?: boolean; tilt3d?: boolean }) {
   const [seed, setSeed] = useState(newSeed)
   const [answers, setAnswers] = useState<string[]>([])
+  const [auto, setAuto] = useState<number[]>([]) // índices de respuestas elegidas por el tapete
   const [idx, setIdx] = useState(0)
   const [playing, setPlaying] = useState(false)
+  const [instant, setInstant] = useState(false)
   const [xray, setXray] = useState(true)
+  const [tilt, setTilt] = useState(tilt3d)
+  const [speed, setSpeed] = useState(1)
   const frames = useMemo(() => run(script, answers, rng(seed)), [script, answers, seed])
   const view = useMemo(() => viewOf(frames), [frames])
   const i = Math.min(idx, frames.length - 1)
   const f = frames[i]
   const waiting = f.ask && f.ask.answer === undefined
   const atEnd = i === frames.length - 1 && !waiting
+  const open = !!(frames.at(-1)!.ask && frames.at(-1)!.ask!.answer === undefined) // guion cortado en una pregunta
+  const r = useRef(rng(seed))
+  const listRef = useRef<HTMLOListElement>(null)
 
-  useEffect(() => {
-    if (!playing) return
-    if (waiting || atEnd) return setPlaying(false)
-    const t = setTimeout(() => setIdx(i + 1), 2300)
-    return () => clearTimeout(t)
-  }, [playing, i, waiting, atEnd])
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if ((e.target as HTMLElement).closest('input, textarea, select, button')) return
-      if (e.key === 'ArrowRight' && !waiting) setIdx(Math.min(i + 1, frames.length - 1))
-      if (e.key === 'ArrowLeft') setIdx(Math.max(i - 1, 0))
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [i, frames.length, waiting])
-
-  const answer = (v: string) => {
+  const answer = (v: string, byTable = false) => {
+    if (byTable) setAuto([...auto, answers.length])
     setAnswers([...answers, v])
     setIdx(i + 1)
   }
+
+  // reproducción continua: si el tapete espera una respuesta, la da él tras una pausa
+  useEffect(() => {
+    if (!playing) return
+    if (atEnd) return setPlaying(false)
+    const t = setTimeout(() => (waiting ? answer(autoAnswer(f, r.current), true) : setIdx(i + 1)), waiting ? 2600 / speed : dwell(f, speed))
+    return () => clearTimeout(t)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- answer() cambia en cada render; el paso lo fijan i y frames
+  }, [playing, i, frames, waiting, atEnd, speed])
+
+  /** Ver un paso con su animación: se coloca el anterior sin animar y se anima hasta este. */
+  const goTo = (n: number) => {
+    setPlaying(false)
+    if (n === 0) return setIdx(0)
+    setInstant(true)
+    setIdx(n - 1)
+    requestAnimationFrame(() => requestAnimationFrame(() => (setInstant(false), setIdx(n))))
+  }
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.target as HTMLElement).closest('input, textarea, select, button, a')) return
+      if (e.key === 'ArrowRight' && !waiting && !atEnd) goTo(i + 1)
+      else if (e.key === 'ArrowLeft') setIdx(Math.max(i - 1, 0))
+      else if (e.key === ' ') setPlaying(!playing)
+      else if (e.key.toLowerCase() === 'r') goTo(i)
+      else return
+      e.preventDefault()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  })
+
+  useEffect(() => {
+    listRef.current?.querySelector('[aria-current="step"]')?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+  }, [i])
+
   const restart = (reshuffle: boolean) => {
-    if (reshuffle) setSeed(newSeed())
+    if (reshuffle) {
+      const s = newSeed()
+      setSeed(s)
+      r.current = rng(s)
+    }
     setAnswers([])
+    setAuto([])
     setIdx(0)
     setPlaying(false)
   }
 
+  const askIndex = (n: number) => frames.slice(0, n).filter((x) => x.ask).length
+  const steps = (
+    <ol className="steps" ref={listRef}>
+      {frames.map((fr, n) => (
+        <li key={n}>
+          <button type="button" aria-current={n === i ? 'step' : undefined} className={n < i ? 'past' : ''} onClick={() => goTo(n)}>
+            <span className="n">{n + 1}</span>
+            <span className="t">
+              {fr.caption}
+              {fr.ask?.answer !== undefined && (
+                <em>
+                  {' '}
+                  → {answerLabel(fr)}
+                  {auto.includes(askIndex(n)) && ' (al azar)'}
+                </em>
+              )}
+            </span>
+          </button>
+        </li>
+      ))}
+      {open && <li className="more">Responde para ver el resto del truco.</li>}
+    </ol>
+  )
+
   return (
     <section className="player" aria-label="Demostración paso a paso">
-      <div className={`table ${f.tone ?? ''}`}>
-        <Stage frame={f} view={view} xray={xray} clickable={waiting && f.ask?.kind === 'card' ? f.ask.among : undefined} onPick={answer} />
-      </div>
-      <div className="caption" aria-live="polite">
-        <span className="step">
-          Paso {i + 1}
-          {!(frames.at(-1)!.ask && frames.at(-1)!.ask!.answer === undefined) && <small> de {frames.length}</small>}
-        </span>
-        <div>
+      <div className="player-main">
+        <div className={`table ${f.tone ?? ''}`}>
+          <Stage
+            frame={f}
+            prev={frames[i - 1]}
+            step={i}
+            view={view}
+            xray={xray}
+            tilt={tilt}
+            speed={speed}
+            instant={instant}
+            clickable={waiting && f.ask?.kind === 'card' ? f.ask.among : undefined}
+            onPick={(c) => answer(c)}
+          />
+        </div>
+
+        <div className="transport">
+          <div className="timeline" role="group" aria-label="Pasos">
+            {frames.map((fr, n) => (
+              <button
+                key={n}
+                type="button"
+                className={`seg ${n < i ? 'past' : ''} ${n === i ? 'now' : ''} ${n === i && playing && !waiting ? 'playing' : ''} ${fr.ask ? 'ask' : ''}`}
+                aria-label={`Paso ${n + 1}`}
+                onClick={() => goTo(n)}
+              >
+                {n === i && playing && !waiting && <span key={`${i}-${speed}`} className="fill" style={{ animationDuration: `${dwell(f, speed)}ms` }} />}
+              </button>
+            ))}
+            {open && <span className="seg rest" aria-hidden />}
+          </div>
+          <div className="buttons">
+            <button type="button" className="ibtn" onClick={() => setIdx(Math.max(i - 1, 0))} disabled={i === 0} aria-label="Paso anterior" title="Paso anterior (←)">
+              <Icon name="prev" />
+            </button>
+            <button
+              type="button"
+              className="ibtn pp"
+              onClick={() => (atEnd ? (restart(false), setPlaying(true)) : setPlaying(!playing))}
+              aria-label={atEnd ? 'Ver de nuevo' : playing ? 'Pausa' : 'Reproducir'}
+              title="Reproducir o pausar (espacio)"
+            >
+              <Icon name={atEnd ? 'replay' : playing ? 'pause' : 'play'} />
+            </button>
+            <button type="button" className="ibtn" onClick={() => goTo(i + 1)} disabled={waiting || atEnd} aria-label="Paso siguiente" title="Paso siguiente (→)">
+              <Icon name="next" />
+            </button>
+            <span className="counter" aria-live="off">
+              <b>{i + 1}</b> / {frames.length}
+              {open && '+'}
+            </span>
+            <span className="spacer" />
+            <button type="button" className="ibtn" onClick={() => goTo(i)} aria-label="Repetir este paso" title="Repetir este paso (R)">
+              <Icon name="replay" />
+            </button>
+            <button type="button" className="tbtn" onClick={() => setSpeed(SPEEDS[(SPEEDS.indexOf(speed) + 1) % SPEEDS.length])} aria-label={`Velocidad ${speed}×`} title="Velocidad">
+              {speed}×
+            </button>
+            <button type="button" className="ibtn" aria-pressed={tilt} onClick={() => setTilt(!tilt)} aria-label="Vista 3D" title="Vista 3D">
+              <Icon name="cube" />
+            </button>
+            <button type="button" className="ibtn" aria-pressed={xray} onClick={() => setXray(!xray)} aria-label="Visión de mago: marcar las cartas clave" title="Visión de mago">
+              <Icon name="eye" />
+            </button>
+            {sim && (
+              <button type="button" className="ibtn" onClick={() => restart(true)} aria-label="Nueva mezcla" title="Nueva mezcla">
+                <Icon name="shuffle" />
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="caption" aria-live="polite">
           {f.inset && xray && (
             <div className="inset">
               <span>{f.inset.label}</span>
@@ -68,7 +199,10 @@ export function Player({ script, sim }: { script: ScriptFn; sim?: boolean }) {
           <p className={`say ${f.tone ?? ''}`}>{f.caption}</p>
           {f.note && <p className="note">{f.note}</p>}
           {f.ask?.answer !== undefined && (
-            <p className="note">Respuesta: {f.ask.kind === 'card' ? short(f.ask.answer) : (f.ask.kind === 'choice' && f.ask.options.find((o) => o.value === f.ask!.answer)?.label)}</p>
+            <p className="note">
+              Respuesta: {answerLabel(f)}
+              {auto.includes(askIndex(i)) && ', elegida al azar por el tapete'}
+            </p>
           )}
           {waiting && f.ask?.kind === 'choice' && (
             <div className={`choices ${f.ask.options.length > 12 ? 'dense' : ''}`}>
@@ -79,37 +213,15 @@ export function Player({ script, sim }: { script: ScriptFn; sim?: boolean }) {
               ))}
             </div>
           )}
-          {waiting && f.ask?.kind === 'card' && <p className="hint">Toca una carta en el tapete.</p>}
+          {waiting && f.ask?.kind === 'card' && <p className="hint">Toca una carta en el tapete{playing ? ', o espera y elige el tapete.' : '.'}</p>}
+          {waiting && f.ask?.kind === 'choice' && playing && <p className="hint">Si no eliges, el tapete elige por ti.</p>}
         </div>
       </div>
-      <div className="controls">
-        <button type="button" className="prev" onClick={() => setIdx(Math.max(i - 1, 0))} disabled={i === 0} aria-label="Paso anterior">
-          ←
-        </button>
-        <button type="button" className="primary" onClick={() => (atEnd ? restart(false) : setPlaying(!playing))} disabled={waiting}>
-          {atEnd ? 'Repetir' : playing ? 'Pausa' : 'Reproducir'}
-        </button>
-        <button type="button" className="next" onClick={() => setIdx(i + 1)} disabled={waiting || atEnd} aria-label="Paso siguiente">
-          →
-        </button>
-        <input
-          type="range"
-          min={0}
-          max={frames.length - 1}
-          value={i}
-          onChange={(e) => setIdx(+e.target.value)}
-          aria-label="Ir al paso"
-        />
-        {sim && (
-          <button type="button" className="sim" onClick={() => restart(true)}>
-            Nueva mezcla
-          </button>
-        )}
-        <label className="xray">
-          <input type="checkbox" checked={xray} onChange={(e) => setXray(e.target.checked)} />
-          Visión de mago
-        </label>
-      </div>
+
+      <aside className="steps-panel" aria-label="Todos los pasos">
+        <h2>Pasos</h2>
+        {steps}
+      </aside>
     </section>
   )
 }

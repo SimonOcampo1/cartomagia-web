@@ -13,3 +13,7 @@ npm run build
 - `src/data/scripts.ts`: guiones de trucos y técnicas.
 - `src/data/lessons.ts`: fichas (nivel, etiquetas, efecto, método, videos).
 - `src/data/videos.ts`: generado con yt-dlp desde la playlist `PLBaAwoiYmUUs`.
+
+## Créditos
+
+Caras de naipe: [cardmeister](https://github.com/cardmeister/cardmeister.github.io) (Unlicense, dominio público), generadas a SVG estático en `src/engine/faces.ts`.

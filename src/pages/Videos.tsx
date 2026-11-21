@@ -15,6 +15,7 @@ export function Videos() {
   const [channel, setChannel] = useState('')
   const [length, setLength] = useState('')
   const [origin, setOrigin] = useState('')
+  const [sort, setSort] = useState('ruta')
   const shown = videos.filter(
     (v) =>
       matches({ ...f, q: norm(f.q) }, v.level, v.tags, norm(`${v.title} ${v.channel}`)) &&
@@ -22,7 +23,7 @@ export function Videos() {
       (!channel || v.channel === channel) &&
       (!length || (length === 'short' ? v.dur <= 180 : v.dur > 180)) &&
       (!origin || (origin === 'ext' ? v.source === 'ext' : !v.source)),
-  )
+  ).sort((a, b) => (sort === 'corto' ? a.dur - b.dur : sort === 'ruta' ? 'PIA'.indexOf(a.level) - 'PIA'.indexOf(b.level) : 0))
   return (
     <main className="page">
       <header className="page-head">
@@ -35,7 +36,19 @@ export function Videos() {
           más {videos.filter((v) => v.source === 'ext').length} elegidos de otros canales de referencia (52Kards, Numberphile, CardMechanic, Chris Ramsay, Italo Castillo…) para cada ficha. El nivel es orientativo.
         </p>
       </header>
-      <Filters f={f} set={setF} tags={TAGS} count={shown.length}>
+      <Filters
+        f={f}
+        set={setF}
+        tags={TAGS}
+        count={shown.length}
+        sort={
+          <select className="sort" value={sort} onChange={(e) => setSort(e.target.value)} aria-label="Ordenar">
+            <option value="ruta">Ruta: de fácil a difícil</option>
+            <option value="corto">Más cortos primero</option>
+            <option value="lista">Orden de la lista</option>
+          </select>
+        }
+      >
         <div className="selects">
           <select value={lang} onChange={(e) => setLang(e.target.value)} aria-label="Idioma">
             <option value="">Idioma: todos</option>

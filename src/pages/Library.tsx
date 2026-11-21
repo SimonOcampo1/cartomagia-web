@@ -1,13 +1,24 @@
 import { useState } from 'react'
 import { Filters, emptyFilter, matches } from '../components/Filters.tsx'
 import { LEVEL_NAME, TAG_NAME, type Lesson, type Tag } from '../data/types.ts'
+
+// las etiquetas que más se buscan, primero
+const TAG_ORDER = Object.keys(TAG_NAME) as Tag[]
+const SORTS = {
+  ruta: { label: 'Ruta: de fácil a difícil', fn: (a: Lesson, b: Lesson) => 'PIA'.indexOf(a.level) - 'PIA'.indexOf(b.level) },
+  rapido: { label: 'Más rápidos de aprender', fn: (a: Lesson, b: Lesson) => (a.minutes ?? 99) - (b.minutes ?? 99) },
+  az: { label: 'Alfabético', fn: (a: Lesson, b: Lesson) => a.name.localeCompare(b.name, 'es') },
+}
 import { norm, useLearned } from '../lib.ts'
 
 export function LessonRow({ l, base, learned }: { l: Lesson; base: string; learned: boolean }) {
   return (
     <li>
       <a href={`#/${base}/${l.id}`} className={`lesson-row lv-${l.level}`}>
-        <span className="lv">{LEVEL_NAME[l.level]}</span>
+        <span className="lv">
+          <i aria-hidden />
+          {LEVEL_NAME[l.level]}
+        </span>
         <span className="name">
           {l.name}
           {learned && <span className="done">aprendido</span>}
@@ -18,7 +29,9 @@ export function LessonRow({ l, base, learned }: { l: Lesson; base: string; learn
             .filter((t) => t !== 'tecnica')
             .map((t) => TAG_NAME[t])
             .join(' · ')}
-          {!l.script && ' · solo video'}
+        </span>
+        <span className="go" aria-hidden>
+          {l.script ? 'Ver paso a paso' : 'Ver videos'} <b>→</b>
         </span>
       </a>
     </li>
@@ -28,18 +41,33 @@ export function LessonRow({ l, base, learned }: { l: Lesson; base: string; learn
 export function Library({ title, intro, items, base }: { title: string; intro: string; items: Lesson[]; base: string }) {
   const [f, setF] = useState(emptyFilter)
   const [pending, setPending] = useState(false)
+  const [sort, setSort] = useState<keyof typeof SORTS>('ruta')
   const { learned } = useLearned()
-  const tags = [...new Set(items.flatMap((l) => l.tags))].filter((t) => t !== 'tecnica' && t !== 'short') as Tag[]
+  const tags = TAG_ORDER.filter((t) => t !== 'tecnica' && t !== 'short' && items.some((l) => l.tags.includes(t)))
   const shown = items.filter(
     (l) => matches({ ...f, q: norm(f.q) }, l.level, l.tags, norm(`${l.name} ${l.effect} ${l.method}`)) && (!pending || !learned.has(l.id)),
-  )
+  ).sort(SORTS[sort].fn)
   return (
     <main className="page">
       <header className="page-head">
         <h1>{title}</h1>
         <p>{intro}</p>
       </header>
-      <Filters f={f} set={setF} tags={tags} count={shown.length}>
+      <Filters
+        f={f}
+        set={setF}
+        tags={tags}
+        count={shown.length}
+        sort={
+          <select className="sort" value={sort} onChange={(e) => setSort(e.target.value as keyof typeof SORTS)} aria-label="Ordenar">
+            {Object.entries(SORTS).map(([k, v]) => (
+              <option key={k} value={k}>
+                {v.label}
+              </option>
+            ))}
+          </select>
+        }
+      >
         <label className="toggle">
           <input type="checkbox" checked={pending} onChange={(e) => setPending(e.target.checked)} />
           Solo lo que me falta aprender

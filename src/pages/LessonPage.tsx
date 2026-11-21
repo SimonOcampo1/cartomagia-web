@@ -37,7 +37,7 @@ export function LessonPage({ id, kind }: { id: string; kind: 'truco' | 'tecnica'
       </header>
 
       {l.script ? (
-        <Player key={l.id} script={l.script} sim={l.sim} />
+        <Player key={l.id} script={l.script} sim={l.sim} tilt3d={kind === 'tecnica'} />
       ) : (
         <p className="no-anim">Aquí lo importante es el ángulo y el ritmo de las manos, no el orden de las cartas: apréndelo con los videos de abajo.</p>
       )}
