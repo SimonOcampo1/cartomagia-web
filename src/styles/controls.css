@@ -77,6 +77,12 @@
   color: var(--color-ink);
   animation: drop var(--dur-short) var(--ease-out);
 }
+@keyframes sheet {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+}
 @keyframes drop {
   from {
     opacity: 0;
@@ -112,6 +118,12 @@
 }
 .field .select-btn {
   width: 100%;
+}
+
+/* en el teléfono el panel es una hoja inferior; el botón y el velo solo existen ahí */
+.panel-done,
+.scrim {
+  display: none;
 }
 
 /* casilla e interruptor: el input real queda encima, invisible, para teclado y lectores */
@@ -285,9 +297,37 @@
     justify-content: center;
   }
   .filter-panel {
-    max-height: 70svh;
+    position: fixed;
+    inset: auto 0 0;
+    z-index: var(--z-modal);
+    max-height: 85svh;
     overflow-y: auto;
-    padding: var(--space-md);
+    overscroll-behavior: contain;
+    padding: var(--space-lg) var(--gutter) 0;
+    border-radius: var(--radius-card) var(--radius-card) 0 0;
+    border-width: 1px 0 0;
+    animation-name: sheet;
+  }
+  .panel-done {
+    position: sticky;
+    bottom: 0;
+    display: block;
+    width: calc(100% + 2 * var(--gutter));
+    min-height: 56px;
+    margin: 0 calc(-1 * var(--gutter));
+    padding: var(--space-sm) var(--gutter) calc(var(--space-sm) + env(safe-area-inset-bottom));
+    border: 0;
+    border-top: 1px solid var(--color-rule);
+    background: var(--color-paper-2);
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+  .scrim {
+    position: fixed;
+    inset: 0;
+    z-index: calc(var(--z-modal) - 1);
+    display: block;
+    background: color-mix(in oklab, var(--color-shade) 60%, transparent);
   }
   .tag-grid,
   .fields {

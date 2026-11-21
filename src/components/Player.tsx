@@ -9,8 +9,9 @@ import { MiniCard, Stage } from './Stage.tsx'
 
 const newSeed = () => Math.floor(Math.random() * 1e9)
 const SPEEDS = [0.5, 1, 1.5, 2]
-/** Lo que dura un paso en pantalla: más texto, más tiempo para leerlo. */
-const dwell = (f: Frame, speed: number) => Math.max(1900, 1000 + f.caption.length * 26) / speed
+/** Lo que dura un paso en pantalla: más texto, más tiempo para leerlo; una decisión ya tomada se sostiene un poco más. */
+const dwell = (f: Frame, speed: number) => (Math.max(3000, 1600 + f.caption.length * 45) + (f.ask ? 1500 : 0)) / speed
+const THINK = 4000 // lo que espera el tapete antes de elegir por ti
 
 const answerLabel = (f: Frame) => {
   const a = f.ask!
@@ -35,22 +36,22 @@ export function Player({ script, sim, tilt3d = false }: { script: ScriptFn; sim?
   const atEnd = i === frames.length - 1 && !waiting
   const open = !!(frames.at(-1)!.ask && frames.at(-1)!.ask!.answer === undefined) // guion cortado en una pregunta
   const r = useRef(rng(seed))
-  const listRef = useRef<HTMLOListElement>(null)
   const playerRef = useRef<HTMLElement>(null)
   const [theater, setTheater] = useState(false)
   const reduce = useReducedMotion()
 
+  /** Si elige el tapete, se queda en la pregunta para que se vea qué eligió; si eliges tú, sigue. */
   const answer = (v: string, byTable = false) => {
     if (byTable) setAuto([...auto, answers.length])
     setAnswers([...answers, v])
-    setIdx(i + 1)
+    if (!byTable) setIdx(i + 1)
   }
 
   // reproducción continua: si el tapete espera una respuesta, la da él tras una pausa
   useEffect(() => {
     if (!playing) return
     if (atEnd) return setPlaying(false)
-    const t = setTimeout(() => (waiting ? answer(autoAnswer(f, r.current), true) : setIdx(i + 1)), waiting ? 2600 / speed : dwell(f, speed))
+    const t = setTimeout(() => (waiting ? answer(autoAnswer(f, r.current), true) : setIdx(i + 1)), waiting ? THINK / speed : dwell(f, speed))
     return () => clearTimeout(t)
     // eslint-disable-next-line react-hooks/exhaustive-deps -- answer() cambia en cada render; el paso lo fijan i y frames
   }, [playing, i, frames, waiting, atEnd, speed])
@@ -79,13 +80,6 @@ export function Player({ script, sim, tilt3d = false }: { script: ScriptFn; sim?
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   })
-
-  // centra el paso actual moviendo solo la lista: scrollIntoView arrastraba la página entera
-  useEffect(() => {
-    const list = listRef.current
-    const el = list?.querySelector<HTMLElement>('[aria-current="step"]')
-    if (list && el) list.scrollTo({ top: el.offsetTop - (list.clientHeight - el.offsetHeight) / 2, behavior: reduce ? 'auto' : 'smooth' })
-  }, [i, reduce, theater])
 
   // pantalla completa: el reproductor ocupa toda la pantalla; donde la API no existe (iPhone), igual se superpone
   const toggleTheater = async () => {
@@ -133,28 +127,6 @@ export function Player({ script, sim, tilt3d = false }: { script: ScriptFn; sim?
   }
 
   const askIndex = (n: number) => frames.slice(0, n).filter((x) => x.ask).length
-  const steps = (
-    <ol className="steps" ref={listRef}>
-      {frames.map((fr, n) => (
-        <li key={n}>
-          <button type="button" aria-current={n === i ? 'step' : undefined} className={n < i ? 'past' : ''} onClick={() => goTo(n)}>
-            <span className="n">{n + 1}</span>
-            <span className="t">
-              {fr.caption}
-              {fr.ask?.answer !== undefined && (
-                <em>
-                  {answerLabel(fr)}
-                  {auto.includes(askIndex(n)) && ', al azar'}
-                </em>
-              )}
-            </span>
-          </button>
-        </li>
-      ))}
-      {open && <li className="more">Responde para ver el resto del truco.</li>}
-    </ol>
-  )
-
   return (
     <section className={`player ${theater ? 'theater' : ''}`} ref={playerRef} aria-label="Demostración paso a paso">
       <div className="player-main">
@@ -241,23 +213,24 @@ export function Player({ script, sim, tilt3d = false }: { script: ScriptFn; sim?
         <div className="stepper">
           <div className="caption" aria-live="polite">
             <div className="caption-body" key={i}>
+              <p className={`say ${f.tone ?? ''}`}>{f.caption}</p>
+              {f.ask?.answer !== undefined && (
+                <p className="decision">
+                  {auto.includes(askIndex(i)) ? 'El tapete eligió' : 'Elegiste'}
+                  {f.ask.kind === 'card' && <MiniCard id={f.ask.answer} />}
+                  <b>{answerLabel(f)}</b>
+                </p>
+              )}
               {f.inset && xray && (
-                <div className="inset">
-                  <span>{f.inset.label}</span>
+                <p className="inset">
+                  {f.inset.label}
                   {f.inset.cards.map((c) => (
                     <MiniCard key={c} id={c} />
                   ))}
-                </div>
-              )}
-              <p className={`say ${f.tone ?? ''}`}>{f.caption}</p>
-              {i === 0 && !playing && <p className="hint">Avanza a tu ritmo con Siguiente, o mira el truco de corrido con el botón de reproducir.</p>}
-              {f.note && <p className="note">{f.note}</p>}
-              {f.ask?.answer !== undefined && (
-                <p className="note">
-                  Respuesta: {answerLabel(f)}
-                  {auto.includes(askIndex(i)) && ', elegida al azar por el tapete'}
                 </p>
               )}
+              {f.note && <p className="note">{f.note}</p>}
+              {i === 0 && !playing && <p className="hint">Avanza a tu ritmo con Siguiente, o mira el truco de corrido con el botón de reproducir.</p>}
               {waiting && f.ask?.kind === 'choice' && (
                 <div className={`choices ${f.ask.options.length > 12 ? 'dense' : ''}`}>
                   {f.ask.options.map((o) => (
@@ -294,11 +267,6 @@ export function Player({ script, sim, tilt3d = false }: { script: ScriptFn; sim?
           </div>
         </div>
       </div>
-
-      <aside className="steps-panel" aria-label="Todos los pasos">
-        <h2>Pasos</h2>
-        {steps}
-      </aside>
     </section>
   )
 }

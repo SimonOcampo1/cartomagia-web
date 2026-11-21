@@ -51,9 +51,13 @@ export function Filters({ f, set, tags, count, sort, extra, extraOn = [] }: Prop
                 ))}
               </fieldset>
               {extra && <div className="panel-extra">{extra}</div>}
+              <button type="button" className="panel-done" onClick={() => setOpen(false)}>
+                Ver {count} {count === 1 ? 'resultado' : 'resultados'}
+              </button>
             </div>
           )}
         </div>
+        {open && <div className="scrim" aria-hidden />}
         {sort}
       </div>
       <div className="filter-row">
