@@ -2,6 +2,37 @@
  {
   "mode": "redesign",
   "depth": "full",
+  "scope": "page",
+  "shape": "Poster hero (fan bowl), Switcher, felt band, Rail, Rows",
+  "theme": "brand",
+  "axes": "dark/grotesk-sans/chromatic-red",
+  "hero": "Poster",
+  "nav": "floating pill on blur",
+  "footer": "mast",
+  "imagery": "real card faces of the engine, fan of 52",
+  "photos": [],
+  "entry": "fan open + turnover cascade",
+  "fingerprint": "fan-switcher-band-rail-rows-mast",
+  "sections": [
+   "hero fan",
+   "switcher",
+   "band statement",
+   "rail",
+   "rows",
+   "footer mast"
+  ],
+  "signature": "la baraja entera se abre en abanico y se da vuelta en cascada",
+  "waived": [
+   "81",
+   "39b",
+   "66"
+  ],
+  "prompt": "hero más original, estético e inmersivo; sin marca repetida ni corte de degradé",
+  "date": "2026-11-21"
+ },
+ {
+  "mode": "redesign",
+  "depth": "full",
   "scope": "site",
   "shape": "Poster hero, Switcher, felt band, Rail, Rows; app screens with stepper player and filter bar",
   "theme": "brand",

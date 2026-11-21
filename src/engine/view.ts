@@ -8,11 +8,8 @@ export function pos(g: Geo, i: number) {
 
 export type View = { x: number; y: number; w: number; h: number }
 
-/**
- * Encuadre que contiene todo lo que pasa en el truco: el tapete se ajusta en vez de dejar paño vacío.
- * `cardsOnly` encuadra solo las zonas con cartas (para un fragmento del truco, como en el hero).
- */
-export function viewOf(frames: Frame[], cardsOnly = false): View {
+/** Encuadre que contiene todo lo que pasa en el truco: el tapete se ajusta en vez de dejar paño vacío. */
+export function viewOf(frames: Frame[]): View {
   let [x0, y0, x1, y1] = [W, H, 0, 0]
   const add = (x: number, y: number, w: number, h: number) => {
     x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x + w); y1 = Math.max(y1, y + h)
@@ -20,7 +17,6 @@ export function viewOf(frames: Frame[], cardsOnly = false): View {
   for (const f of frames) {
     for (const [z, cards] of Object.entries(f.zones)) {
       const g = f.geo[z]
-      if (cardsOnly && !cards.length) continue
       add(g.x, g.y, CW, CH) // la zona cuenta aunque esté vacía: el encuadre no salta
       if (g.label) add(g.x, g.y - 3, 10, 3)
       cards.forEach((_, i) => {

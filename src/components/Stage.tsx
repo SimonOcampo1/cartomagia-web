@@ -1,24 +1,13 @@
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { longName, type CardId } from '../engine/cards.ts'
-import { FACES } from '../engine/faces.ts'
+import { BACK, faceUrl } from './cardArt.ts'
 import { CH, CW, H, W, type Frame, type HandPose, type Mark } from '../engine/scene.ts'
 import { pos, type View } from '../engine/view.ts'
 
 const EASE = [0.16, 1, 0.3, 1] as const // ease-out-expo
 const TRAVEL = [0.65, 0, 0.35, 1] as const // ida y vuelta de un paquete que se abre
 const THICK = 0.042 // grosor de una carta en unidades de tapete (52 cartas ≈ 1,7 cm sobre 6,3 cm de ancho)
-
-const svgUrl = (svg: string) => `url("data:image/svg+xml,${encodeURIComponent(svg)}")`
-const faceUrl: Record<string, string> = Object.fromEntries(Object.entries(FACES).map(([id, svg]) => [id, svgUrl(svg)]))
-const BACK = svgUrl(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 334'>
-<defs><pattern id='p' width='14' height='14' patternUnits='userSpaceOnUse' patternTransform='rotate(45)'>
-<rect width='14' height='14' fill='#a8291f'/><path d='M0 7h14M7 0v14' stroke='#d9584a' stroke-width='1.4'/><circle cx='7' cy='7' r='2' fill='#f1e3cf'/></pattern></defs>
-<rect width='240' height='334' rx='12' fill='#f8f4ea'/><rect x='12' y='12' width='216' height='310' rx='6' fill='url(#p)'/>
-<rect x='12' y='12' width='216' height='310' rx='6' fill='none' stroke='#7d1d16' stroke-width='2'/>
-<rect x='18' y='18' width='204' height='298' rx='3' fill='none' stroke='#f1e3cf' stroke-width='1.5'/>
-<ellipse cx='120' cy='167' rx='34' ry='46' fill='#a8291f' stroke='#f1e3cf' stroke-width='2'/>
-<path d='M120 138l14 29-14 29-14-29z' fill='#f1e3cf'/></svg>`)
 
 function CardFace({ id }: { id: CardId }) {
   return <span className="face front" style={{ backgroundImage: faceUrl[id] }} />

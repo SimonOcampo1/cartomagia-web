@@ -1,114 +1,152 @@
 /* Inicio: hero, la ruta por niveles, la franja de paño, el riel de videos y las fuentes. */
-/* ── Hero: el paño a pantalla completa, como el banner ───────────────────── */
-/* la barra flota sobre el paño en vez de empujarlo */
+/* ── Hero: la baraja en abanico sobre el paño, bajo una lámpara ───────────────────── */
+/* la barra flota sobre el paño; la luz fija del resto de páginas se apaga: aquí la lámpara es el hero */
 body:has(.hero) .topbar {
   margin-bottom: calc(-1 * var(--nav-h));
 }
+body:has(.hero)::before {
+  display: none;
+}
 .hero {
+  /* el abanico: radio y carta */
+  --R: min(36svh, 34vw);
+  --cw: calc(var(--R) * 0.21);
+  --ch: calc(var(--cw) * 1.39);
   position: relative;
   isolation: isolate;
-  display: grid;
+  display: flex;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
   min-height: 100svh;
-  padding: calc(var(--nav-h) + var(--space-xl)) 0 var(--space-3xl);
-  background: radial-gradient(75% 80% at 72% 38%, var(--color-felt-lit) 0%, var(--color-felt) 32%, var(--color-felt-deep) 68%, var(--color-felt-edge) 100%);
+  overflow: clip;
+  padding: calc(var(--nav-h) + var(--space-lg)) var(--gutter) var(--space-lg);
+  text-align: center;
+  /* la lámpara cae sobre el abanico; el paño se apaga hasta el color de la sala */
+  background: radial-gradient(62% 64% at 50% 62%, var(--color-felt-lit) 0%, var(--color-felt) 28%, var(--color-felt-deep) 52%, var(--color-felt-edge) 72%, var(--color-paper) 100%);
 }
-/* textura de paño y el borde que se funde con la sala */
-.hero::before,
-.hero::after {
+.hero::before {
   content: '';
   position: absolute;
   inset: 0;
   z-index: -1;
   pointer-events: none;
-}
-.hero::before {
   opacity: 0.2;
   mix-blend-mode: overlay;
   background-image: var(--felt-noise);
 }
+/* el pie del hero termina en el color de la sala, sin corte con lo que sigue */
 .hero::after {
-  top: auto;
-  height: 22%;
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 14%;
+  z-index: -1;
+  pointer-events: none;
   background: linear-gradient(to bottom, transparent, var(--color-paper));
 }
-.hero-inner {
-  display: grid;
-  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-  gap: var(--space-xl);
-  align-items: center;
-  width: 100%;
-  max-width: var(--container);
-  margin-inline: auto;
-  padding-inline: var(--gutter);
-}
 .hero h1 {
-  max-width: none;
-  margin-left: -0.04em;
-  font-size: clamp(4.5rem, 12vw, 11rem);
-  line-height: 0.86;
-  letter-spacing: -0.055em;
-}
-.hero-line {
-  margin-top: var(--space-lg);
   max-width: 17ch;
-  font: 500 var(--text-2xl)/1.1 var(--font-display);
-  letter-spacing: -0.03em;
-  color: var(--color-ink);
-  text-wrap: balance;
+  font-size: clamp(2.75rem, 6.6vw, 7rem);
+  line-height: 0.96;
 }
-.cta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-sm);
-  margin-top: var(--space-xl);
+.hero .lead {
+  margin-top: var(--space-md);
+  max-width: 34ch;
+  color: var(--color-ink-2);
 }
-.pitch > * {
+.hero h1,
+.hero .lead {
   animation: rise 0.6s var(--ease-out) both;
 }
-.pitch > :nth-child(2) {
+.hero .lead {
   animation-delay: 80ms;
-}
-.pitch > :nth-child(3) {
-  animation-delay: 160ms;
 }
 @keyframes rise {
   from {
     transform: translateY(8px);
   }
 }
-.hero-stage {
-  --stage-chrome: 300px;
-  margin: 0;
+
+/* el cuenco: lo dibuja el abanico; adentro, la flecha */
+.bowl {
+  position: relative;
+  width: calc(var(--R) * 2 + var(--ch));
+  height: calc(var(--R) + var(--ch));
+  margin-top: var(--space-lg);
 }
-/* las cartas llegan repartidas desde fuera de escena */
-.hero-stage .stage {
-  overflow: clip;
-  overflow-clip-margin: var(--space-xl);
-}
-.hero-stage figcaption {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: start;
+/* los botones vienen después del cuenco y suben a su interior; en el teléfono quedan debajo */
+.cta {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: var(--space-sm);
-  margin-top: var(--space-md);
-  min-height: 4.2em;
+  margin-top: calc(var(--ch) / 2 + var(--space-lg) - var(--R) - var(--ch));
+  margin-bottom: calc(var(--R) + var(--ch) / 2 - var(--space-lg) - 52px);
 }
-.hero-say {
-  display: grid;
-  gap: var(--space-3xs);
-  padding-top: var(--space-xs);
+/* cada carta gira desde el centro del cuenco y se aleja un radio; se abre desde un solo mazo */
+.fan {
+  position: absolute;
+  inset: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-card);
+  background: none;
+  pointer-events: none;
 }
-.hero-say small {
-  font-size: var(--text-sm);
-  color: var(--color-ink-2);
+.fan:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 8px;
 }
-/* la flecha: hay más abajo. Ancha, en latón, sin caja; el botón es todo su alrededor */
+.fc {
+  position: absolute;
+  left: calc(50% - var(--cw) / 2);
+  top: 0;
+  width: var(--cw);
+  height: var(--ch);
+  font-size: calc(var(--cw) * 0.2375);
+  pointer-events: auto;
+  cursor: pointer;
+  transform: rotate(var(--a)) translateY(var(--R));
+  animation: fan-open 0.9s var(--ease-out) 0.2s both;
+}
+@keyframes fan-open {
+  from {
+    transform: rotate(0deg) translateY(var(--R));
+  }
+}
+/* la carta bajo el puntero se asoma hacia afuera del abanico */
+.fc .lift {
+  display: block;
+  width: 100%;
+  height: 100%;
+  perspective: 600px;
+  transition: transform var(--dur-short) var(--ease-out);
+}
+.fc:hover .lift {
+  transform: translateY(14%);
+}
+/* la vuelta en cascada: cada carta gira un instante después de la anterior */
+.fc .flip {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transform: rotateY(180deg);
+  transition: transform 0.5s var(--ease-in-out) calc(var(--i) * 16ms);
+}
+.fan.up .flip {
+  transform: rotateY(0deg);
+}
+/* la flecha, al fondo del cuenco, con aire sobre la carta más baja */
 .cue {
   position: absolute;
   left: 50%;
-  /* al pie de la primera pantalla, aunque el hero sea más alto (celular) */
-  top: calc(100svh - 56px - var(--space-md));
+  bottom: calc(var(--ch) + var(--space-md));
+  z-index: 1;
   display: grid;
   place-items: center;
   width: 96px;
@@ -126,9 +164,6 @@ body:has(.hero) .topbar {
 }
 .cue svg {
   animation: bob 2.2s var(--ease-in-out) infinite;
-}
-.cue.still svg {
-  animation-play-state: paused;
 }
 @keyframes bob {
   50% {
@@ -398,27 +433,27 @@ body:has(.hero) .topbar {
 }
 
 @media (max-width: 60rem) {
-  .hero-inner,
+  .route-list {
+    columns: 1;
+  }
   .head.split,
   .route-panel,
   .sources-cols {
     grid-template-columns: minmax(0, 1fr);
   }
-  .hero-inner {
-    gap: var(--space-xl);
-  }
-  .hero-stage {
-    --stage-chrome: 45svh;
-  }
 }
 
 @media (max-width: 40rem) {
-  /* en el teléfono la flecha ocupa el pie: del paso queda solo la pausa */
-  .hero-say {
-    display: none;
+  /* en el teléfono: título y frase, el abanico grande con la flecha adentro, y los botones debajo */
+  .hero {
+    --R: 42vw;
   }
-  .route-list {
-    columns: 1;
+  .hero .lead {
+    font-size: var(--text-md);
+  }
+  .cta {
+    width: 100%;
+    margin: var(--space-lg) 0 0;
   }
 }
 
@@ -458,7 +493,9 @@ body:has(.hero) .topbar {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pitch > *,
+  .hero h1,
+  .hero .lead,
+  .fc,
   .cue svg,
   .route-panel {
     animation: none;
