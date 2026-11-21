@@ -27,12 +27,15 @@ const BOOKS = [
 ]
 const CHANNELS = ['Julio Ribera', 'Santi Marcilla', 'A Million Card Tricks', 'Matt McGurk', 'Steven Taputoro', '52Kards']
 
+// el fragmento de Las 21 cartas que muestra el hero: reparto, piensa una carta, la elegida marcada
+const FIRST = 1
+const LAST = 3
 const prefersStill = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches
 
 function Hero() {
   const [seed, setSeed] = useState(7)
   const frames = useMemo(() => runAuto(veintiuna, seed), [seed])
-  const [i, setI] = useState(1) // el primer cuadro ya con las cartas repartidas
+  const [i, setI] = useState(LAST) // en reposo: la carta elegida, marcada
   const [paused, setPaused] = useState(prefersStill) // el botón de pausa
   const [held, setHeld] = useState(false) // puntero o foco encima
   const [seen, setSeen] = useState(true) // fuera de pantalla no corre
@@ -44,55 +47,63 @@ function Hero() {
   }, [])
   useEffect(() => {
     if (paused || held || !seen) return
-    const t = setTimeout(() => (i < frames.length - 1 ? setI(i + 1) : (setI(0), setSeed(seed + 1))), i === frames.length - 1 ? 4500 : 1700)
+    const t = setTimeout(() => (i < LAST ? setI(i + 1) : (setI(FIRST), setSeed(seed + 1))), i === LAST ? 4500 : 2000)
     return () => clearTimeout(t)
-  }, [i, frames.length, seed, paused, held, seen])
-  const view = useMemo(() => viewOf(frames), [frames])
-  const f = frames[Math.min(i, frames.length - 1)]
+  }, [i, seed, paused, held, seen])
+  const view = useMemo(() => viewOf(frames.slice(FIRST, LAST + 1), true), [frames])
+  const f = frames[i]
   return (
     <section className="hero">
-      <div className="pitch">
-        <h1>De la primera carta al pase clásico.</h1>
-        <p className="lead">
-          {tricks.length} trucos y {techniques.length} técnicas, paso a paso, sobre un tapete animado.
-        </p>
-        <div className="cta">
-          <a className="btn primary" href="#/truco/veintiuna">
-            Empieza por las 21 cartas
-          </a>
-          <a className="btn quiet" href="#/trucos">
-            Ver todos los trucos
-          </a>
-        </div>
-      </div>
-      <figure
-        className="hero-table"
-        ref={ref}
-        onMouseEnter={() => setHeld(true)}
-        onMouseLeave={() => setHeld(false)}
-        onFocus={() => setHeld(true)}
-        onBlur={() => setHeld(false)}
-      >
-        <div className={`table ${f.tone ?? ''}`}>
-          <Stage frame={f} prev={frames[i - 1]} step={i} view={view} />
-        </div>
-        <figcaption>
-          <button type="button" className="ibtn" onClick={() => setPaused(!paused)} aria-label={paused ? 'Seguir repartiendo' : 'Pausar el tapete'}>
-            <Icon name={paused ? 'play' : 'pause'} />
-          </button>
-          <div className="hero-say">
-            <small>
-              Las 21 cartas, paso {i + 1} de {frames.length}
-            </small>
-            <span>{f.caption}</span>
+      <div className="hero-inner">
+        <div className="pitch">
+          <h1>Tapete</h1>
+          <p className="hero-line">De la primera carta al pase clásico.</p>
+          <div className="cta">
+            <a className="btn primary" href="#/truco/veintiuna">
+              Empieza por las 21 cartas
+            </a>
+            <a className="btn quiet" href="#/trucos">
+              Ver todos los trucos
+            </a>
           </div>
-          {f.inset && (
-            <span className="inset">
-              {f.inset.label} <MiniCard id={f.inset.cards[0]} />
-            </span>
-          )}
-        </figcaption>
-      </figure>
+        </div>
+        <figure
+          className="hero-stage"
+          ref={ref}
+          onMouseEnter={() => setHeld(true)}
+          onMouseLeave={() => setHeld(false)}
+          onFocus={() => setHeld(true)}
+          onBlur={() => setHeld(false)}
+        >
+          <Stage frame={f} prev={frames[i - 1]} step={i} view={view} />
+          <figcaption>
+            <button type="button" className="ibtn" onClick={() => setPaused(!paused)} aria-label={paused ? 'Seguir repartiendo' : 'Pausar el tapete'}>
+              <Icon name={paused ? 'play' : 'pause'} />
+            </button>
+            <div className="hero-say">
+              <small>
+                Las 21 cartas, paso {i + 1} de {frames.length}
+              </small>
+              <span>{f.caption}</span>
+            </div>
+            {f.inset && (
+              <span className="inset">
+                {f.inset.label} <MiniCard id={f.inset.cards[0]} />
+              </span>
+            )}
+          </figcaption>
+        </figure>
+      </div>
+      <button
+        type="button"
+        className={`cue ${seen ? '' : 'still'}`}
+        aria-label="Bajar a la ruta"
+        onClick={() => document.getElementById('ruta')?.scrollIntoView({ behavior: prefersStill() ? 'auto' : 'smooth' })}
+      >
+        <svg viewBox="0 0 64 22" width="64" height="22" aria-hidden>
+          <path d="M3 4l29 14L61 4" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
     </section>
   )
 }
@@ -110,12 +121,12 @@ function Route() {
     tabs.current?.querySelector<HTMLElement>(`#tab-${next}`)?.focus()
   }
   return (
-    <section className="route">
+    <section className="route" id="ruta">
       <div className="container">
         <header className="head">
           <h2>La ruta</h2>
           <p className="lead">
-            Tres niveles. Cada uno combina trucos y las técnicas que necesitan.{' '}
+            {tricks.length} trucos y {techniques.length} técnicas en tres niveles. Cada uno combina trucos y las técnicas que necesitan.{' '}
             {learned.size > 0 && (
               <strong>
                 Llevas {learned.size} de {all.length}.

@@ -1,6 +1,8 @@
 import { useState } from 'react'
+import { Check } from '../components/Check.tsx'
 import { Filters } from '../components/Filters.tsx'
 import { Pips } from '../components/Pips.tsx'
+import { Select } from '../components/Select.tsx'
 import { emptyFilter, matches, norm } from '../lib/filter.ts'
 import { useLearned } from '../lib/hooks.ts'
 import { LEVEL_NAME, TAG_NAME, type Lesson, type Tag } from '../data/types.ts'
@@ -8,7 +10,7 @@ import { LEVEL_NAME, TAG_NAME, type Lesson, type Tag } from '../data/types.ts'
 // las etiquetas que más se buscan, primero
 const TAG_ORDER = Object.keys(TAG_NAME) as Tag[]
 const SORTS = {
-  ruta: { label: 'Ruta: de fácil a difícil', fn: (a: Lesson, b: Lesson) => 'PIA'.indexOf(a.level) - 'PIA'.indexOf(b.level) },
+  ruta: { label: 'De fácil a difícil', fn: (a: Lesson, b: Lesson) => 'PIA'.indexOf(a.level) - 'PIA'.indexOf(b.level) },
   rapido: { label: 'Más rápidos de aprender', fn: (a: Lesson, b: Lesson) => (a.minutes ?? 99) - (b.minutes ?? 99) },
   az: { label: 'Alfabético', fn: (a: Lesson, b: Lesson) => a.name.localeCompare(b.name, 'es') },
 }
@@ -60,21 +62,14 @@ export function Library({ title, intro, items, base }: { title: string; intro: s
         set={setF}
         tags={tags}
         count={shown.length}
-        sort={
-          <select className="sort" value={sort} onChange={(e) => setSort(e.target.value as keyof typeof SORTS)} aria-label="Ordenar">
-            {Object.entries(SORTS).map(([k, v]) => (
-              <option key={k} value={k}>
-                {v.label}
-              </option>
-            ))}
-          </select>
+        sort={<Select label="Ordenar" value={sort} options={Object.entries(SORTS).map(([k, v]) => ({ value: k, label: v.label }))} onChange={(v) => setSort(v as keyof typeof SORTS)} />}
+        extraOn={pending ? [{ label: 'Solo lo que me falta', clear: () => setPending(false) }] : []}
+        extra={
+          <Check toggle checked={pending} onChange={setPending}>
+            Solo lo que me falta aprender
+          </Check>
         }
-      >
-        <label className="toggle">
-          <input type="checkbox" checked={pending} onChange={(e) => setPending(e.target.checked)} />
-          Solo lo que me falta aprender
-        </label>
-      </Filters>
+      />
       {shown.length ? (
         <ul className="lessons">
           {shown.map((l) => (

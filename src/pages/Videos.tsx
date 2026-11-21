@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Filters } from '../components/Filters.tsx'
+import { Select, type Option } from '../components/Select.tsx'
 import { Pips } from '../components/Pips.tsx'
 import { emptyFilter, matches, norm } from '../lib/filter.ts'
 import { VideoEmbed } from '../components/VideoEmbed.tsx'
@@ -9,6 +10,39 @@ import { PLAYLIST_ID, videos } from '../data/videos.ts'
 
 const TAGS: Tag[] = ['sin-setup', 'automatico', 'impromptu', 'matematico', 'juego-de-manos', 'prediccion', 'mentalismo', 'acaan', 'ases', 'cambio', 'control', 'pocas-cartas', 'visual', 'tecnica']
 const channels = [...new Set(videos.map((v) => v.channel))].sort()
+const SORTS = [
+  { value: 'ruta', label: 'De fácil a difícil' },
+  { value: 'corto', label: 'Más cortos primero' },
+  { value: 'lista', label: 'Orden de la lista' },
+]
+const LANGS = [
+  { value: '', label: 'Todos' },
+  { value: 'es', label: 'Español' },
+  { value: 'en', label: 'Inglés' },
+]
+const ORIGINS = [
+  { value: '', label: 'Todas' },
+  { value: 'playlist', label: 'Tu lista' },
+  { value: 'ext', label: 'Otros canales' },
+]
+const LENGTHS = [
+  { value: '', label: 'Todas' },
+  { value: 'short', label: 'Cortos (≤ 3 min)' },
+  { value: 'long', label: 'Tutoriales largos' },
+]
+
+/** Un filtro activo como etiqueta que se puede quitar. */
+const on = (name: string, value: string, options: Option[], clear: (v: string) => void) =>
+  value ? [{ label: `${name}: ${options.find((o) => o.value === value)?.label ?? value}`, clear: () => clear('') }] : []
+
+function Field({ label, ...rest }: { label: string } & Omit<Parameters<typeof Select>[0], 'label'>) {
+  return (
+    <div className="field">
+      <span className="field-label">{label}</span>
+      <Select label={label} {...rest} />
+    </div>
+  )
+}
 
 export function Videos() {
   const [f, setF] = useState(emptyFilter)
@@ -42,38 +76,17 @@ export function Videos() {
         set={setF}
         tags={TAGS}
         count={shown.length}
-        sort={
-          <select className="sort" value={sort} onChange={(e) => setSort(e.target.value)} aria-label="Ordenar">
-            <option value="ruta">Ruta: de fácil a difícil</option>
-            <option value="corto">Más cortos primero</option>
-            <option value="lista">Orden de la lista</option>
-          </select>
+        sort={<Select label="Ordenar" value={sort} options={SORTS} onChange={setSort} />}
+        extraOn={[...on('Idioma', lang, LANGS, setLang), ...on('Canal', channel, [], setChannel), ...on('Fuente', origin, ORIGINS, setOrigin), ...on('Duración', length, LENGTHS, setLength)]}
+        extra={
+          <div className="fields">
+            <Field label="Idioma" value={lang} options={LANGS} onChange={setLang} />
+            <Field label="Canal" value={channel} options={[{ value: '', label: 'Todos' }, ...channels.map((c) => ({ value: c, label: c }))]} onChange={setChannel} />
+            <Field label="Fuente" value={origin} options={ORIGINS} onChange={setOrigin} />
+            <Field label="Duración" value={length} options={LENGTHS} onChange={setLength} />
+          </div>
         }
-      >
-        <div className="selects">
-          <select value={lang} onChange={(e) => setLang(e.target.value)} aria-label="Idioma">
-            <option value="">Idioma: todos</option>
-            <option value="es">Español</option>
-            <option value="en">Inglés</option>
-          </select>
-          <select value={channel} onChange={(e) => setChannel(e.target.value)} aria-label="Canal">
-            <option value="">Canal: todos</option>
-            {channels.map((c) => (
-              <option key={c}>{c}</option>
-            ))}
-          </select>
-          <select value={origin} onChange={(e) => setOrigin(e.target.value)} aria-label="Origen">
-            <option value="">Fuente: todas</option>
-            <option value="playlist">Tu lista</option>
-            <option value="ext">Otros canales</option>
-          </select>
-          <select value={length} onChange={(e) => setLength(e.target.value)} aria-label="Duración">
-            <option value="">Duración: todas</option>
-            <option value="short">Cortos (≤ 3 min)</option>
-            <option value="long">Tutoriales largos</option>
-          </select>
-        </div>
-      </Filters>
+      />
       {shown.length ? (
         <div className="video-grid">
           {shown.map((v, n) => (

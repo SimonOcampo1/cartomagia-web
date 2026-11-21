@@ -17,6 +17,9 @@ export function LessonPage({ id, kind }: { id: string; kind: 'truco' | 'tecnica'
   // el tutorial que va junto al tapete: el primero en español, si hay
   const lead = vids.find((v) => v.lang === 'es') ?? vids[0]
   const rest = vids.filter((v) => v !== lead)
+  // la ficha técnica: la preparación aparte, el resto de etiquetas como tipo
+  const prep = l.tags.includes('setup') ? 'Con preparación' : l.tags.includes('sin-setup') ? 'Sin preparación' : undefined
+  const kinds = l.tags.filter((t) => !['tecnica', 'interactivo', 'setup', 'sin-setup', 'short'].includes(t)).map((t) => TAG_NAME[t])
   const techs = (l.techniques ?? []).map((t) => lessonById[t]).filter(Boolean)
   const usedBy = Object.values(lessonById).filter((x) => x.techniques?.includes(l.id))
 
@@ -30,18 +33,33 @@ export function LessonPage({ id, kind }: { id: string; kind: 'truco' | 'tecnica'
       <header className="lesson-head">
         <h1>{l.name}</h1>
         <p className="lead">{l.effect}</p>
-        <ul className="taglist">
-          <li className="lvtag">
-            <Pips level={l.level} />
-            {LEVEL_NAME[l.level]}
-          </li>
-          {l.tags
-            .filter((t) => t !== 'tecnica')
-            .map((t) => (
-              <li key={t}>{TAG_NAME[t]}</li>
-            ))}
-          {l.minutes && <li className="num">~{l.minutes} min</li>}
-        </ul>
+        <dl className="facts">
+          <div>
+            <dt>Nivel</dt>
+            <dd>
+              <Pips level={l.level} />
+              {LEVEL_NAME[l.level]}
+            </dd>
+          </div>
+          {prep && (
+            <div>
+              <dt>Preparación</dt>
+              <dd>{prep}</dd>
+            </div>
+          )}
+          {kinds.length > 0 && (
+            <div className="wide">
+              <dt>Tipo</dt>
+              <dd>{kinds.join(', ')}</dd>
+            </div>
+          )}
+          {l.minutes && (
+            <div>
+              <dt>Se aprende en</dt>
+              <dd className="num">~{l.minutes} min</dd>
+            </div>
+          )}
+        </dl>
       </header>
 
       {l.script ? (

@@ -169,7 +169,7 @@ button {
 .foot-mark {
   display: block;
   width: fit-content;
-  font: 500 clamp(4.5rem, 14vw, 12rem)/0.86 var(--font-display);
+  font: 500 clamp(3rem, 7vw, 6rem)/0.9 var(--font-display);
   letter-spacing: -0.055em;
   color: var(--color-ink-2);
   text-decoration: none;

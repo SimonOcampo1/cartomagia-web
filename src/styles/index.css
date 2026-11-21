@@ -1,5 +1,5 @@
 /* Hallmark · shape: Stage hero, Switcher, felt band, Rail, Rows (/); app screen (/trucos, /tecnicas, ficha, /videos) · genre: atmospheric · theme: brand · redesign: full
- * paper: oklch(17% 0.018 162) · accent: oklch(55% 0.165 27) · display: Funnel Display · body: Funnel Sans · hero: Stage (/) · nav: floating pill on blur · footer: mast · signature: el tapete repartiendo Las 21 cartas en vivo bajo luz cenital
+ * paper: oklch(17% 0.018 162) · accent: oklch(55% 0.165 27) · display: Funnel Display · body: Funnel Sans · hero: Poster (/) · nav: floating pill on blur · footer: mast · signature: el paño a pantalla completa con Las 21 cartas repartiéndose en vivo, como el banner del repo
  * axes: dark/grotesk-sans/chromatic-red · posture: Restrained · contrast: pass · fold: pass · job: try · v2.0.0 */
 /* Hallmark · pre-emit critique: P4 H4 E4 S5 R4 V3 · weakest: V, primera corrida sin log; el hero gira sobre el tapete en vivo y la ruta se lee como programa por niveles */
 /* Hallmark · hero-review: fix · 5 findings · 3 resolved 2 partial (el paño vacío es donde caen el paquete y el conteo más tarde en el bucle; las caras a 375 quedan chicas por el ancho) */
@@ -13,6 +13,13 @@
 /* Hallmark · dismissed 49 · .btn sets white-space: nowrap, the label never wraps */
 /* Hallmark · answered F20 · the videoteca count is the filtered data, any filter changes the last row */
 /* Hallmark · dismissed finish 4 · the rail cuts its next item at the edge on purpose (layout.md § 5, 12), it scrolls by touch, wheel and keys */
+/* Hallmark · waive 66 · the user asked for a scroll cue under the full-screen hero · la flecha baja a la ruta, es un botón real y su vaivén se detiene fuera de pantalla */
+/* Hallmark · reworded "De la primera carta al pase clásico." to "Tapete" · the user asked for a full-screen hero in line with the repo banner; the old head is now the line under the wordmark */
+/* Hallmark · dropped setchannel(e.target, setlang(e.target, setlength(e.target, setorigin(e.target, setpending(e.target, setsort(e.target, setmore(, settilt(! · the user asked for controls in the page's own UI: Select and Check replace the native selects and checkbox with the same labels, values and state, the tags moved into the Filtros panel, and the 3D toggle became a 2D | 3D pair */
+/* Hallmark · dropped 3min · "Cortos (≤ 3 min)" is still an option of the Duración list, shown when the list opens */
+/* Hallmark · hero-review (poster): fix · 5 findings · 5 resolved (cardsOnly view, brass chosen card and arrow, arrow at the fold on phone) */
+/* Hallmark · finish-review (poster, stepper, filters): subagent · 8 findings · 6 resolved 1 partial (lesson at rest keeps the trick's own framing) 1 to the owner (step list only in fullscreen, as asked; the timeline jumps to any step) */
+/* Hallmark · dropped next, prev, tags: toggle(f.tags · the transport's step arrows moved into the step card as Anterior and Siguiente, and the tag pills became checkboxes in the Filtros panel plus removable chips */
 /* Hallmark · waive 39b · step rows and video thumbnails are buttons sized by their content · cada paso del truco y cada miniatura de la videoteca son botones grandes a propósito */
 @import url('./tokens.css');
 @import url('./base.css');
@@ -20,5 +27,6 @@
 @import url('./stage.css');
 @import url('./home.css');
 @import url('./catalog.css');
+@import url('./controls.css');
 @import url('./player.css');
 @import url('./lesson.css');

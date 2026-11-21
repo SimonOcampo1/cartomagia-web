@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type RefObject } from 'react'
 
 export function useHash() {
   const [hash, setHash] = useState(() => location.hash.slice(1) || '/')
@@ -37,4 +37,19 @@ export function useLearned() {
     }
   }
   return { learned, toggle }
+}
+
+/** Cierra un panel desplegado al tocar fuera de él o con Esc. */
+export function useDismiss(open: boolean, close: () => void, ref: RefObject<HTMLElement | null>) {
+  useEffect(() => {
+    if (!open) return
+    const onDown = (e: PointerEvent) => !ref.current?.contains(e.target as Node) && close()
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && close()
+    document.addEventListener('pointerdown', onDown)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('pointerdown', onDown)
+      document.removeEventListener('keydown', onKey)
+    }
+  })
 }

@@ -1,23 +1,61 @@
 /* Inicio: hero, la ruta por niveles, la franja de paño, el riel de videos y las fuentes. */
-/* ── Hero ───────────────────── */
+/* ── Hero: el paño a pantalla completa, como el banner ───────────────────── */
+/* la barra flota sobre el paño en vez de empujarlo */
+body:has(.hero) .topbar {
+  margin-bottom: calc(-1 * var(--nav-h));
+}
 .hero {
+  position: relative;
+  isolation: isolate;
   display: grid;
-  grid-template-columns: minmax(0, 6fr) minmax(0, 7fr);
-  gap: var(--space-3xl);
   align-items: center;
+  min-height: 100svh;
+  padding: calc(var(--nav-h) + var(--space-xl)) 0 var(--space-3xl);
+  background: radial-gradient(75% 80% at 72% 38%, var(--color-felt-lit) 0%, var(--color-felt) 32%, var(--color-felt-deep) 68%, var(--color-felt-edge) 100%);
+}
+/* textura de paño y el borde que se funde con la sala */
+.hero::before,
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+.hero::before {
+  opacity: 0.2;
+  mix-blend-mode: overlay;
+  background-image: var(--felt-noise);
+}
+.hero::after {
+  top: auto;
+  height: 22%;
+  background: linear-gradient(to bottom, transparent, var(--color-paper));
+}
+.hero-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: var(--space-xl);
+  align-items: center;
+  width: 100%;
   max-width: var(--container);
-  min-height: calc(100svh - var(--nav-h));
   margin-inline: auto;
-  padding: var(--space-xl) var(--gutter) var(--space-2xl);
+  padding-inline: var(--gutter);
 }
 .hero h1 {
-  font-size: clamp(2.5rem, 5.8vw, 5.25rem);
-  line-height: 0.98;
+  max-width: none;
+  margin-left: -0.04em;
+  font-size: clamp(4.5rem, 12vw, 11rem);
+  line-height: 0.86;
+  letter-spacing: -0.055em;
 }
-.hero .lead {
+.hero-line {
   margin-top: var(--space-lg);
-  color: var(--color-ink-2);
-  max-width: 30ch;
+  max-width: 17ch;
+  font: 500 var(--text-2xl)/1.1 var(--font-display);
+  letter-spacing: -0.03em;
+  color: var(--color-ink);
+  text-wrap: balance;
 }
 .cta {
   display: flex;
@@ -39,14 +77,16 @@
     transform: translateY(8px);
   }
 }
-.hero-table {
+.hero-stage {
+  --stage-chrome: 300px;
   margin: 0;
 }
-/* la lámpara cae sobre las columnas */
-.hero-table .table {
-  --lamp: 64% 30%;
+/* las cartas llegan repartidas desde fuera de escena */
+.hero-stage .stage {
+  overflow: clip;
+  overflow-clip-margin: var(--space-xl);
 }
-.hero-table figcaption {
+.hero-stage figcaption {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: start;
@@ -61,7 +101,39 @@
 }
 .hero-say small {
   font-size: var(--text-sm);
-  color: var(--color-muted);
+  color: var(--color-ink-2);
+}
+/* la flecha: hay más abajo. Ancha, en latón, sin caja; el botón es todo su alrededor */
+.cue {
+  position: absolute;
+  left: 50%;
+  /* al pie de la primera pantalla, aunque el hero sea más alto (celular) */
+  top: calc(100svh - 56px - var(--space-md));
+  display: grid;
+  place-items: center;
+  width: 96px;
+  height: 56px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-input);
+  background: none;
+  color: var(--color-brass);
+  translate: -50% 0;
+  transition: color var(--dur-short) var(--ease-out);
+}
+.cue:hover {
+  color: var(--color-ink);
+}
+.cue svg {
+  animation: bob 2.2s var(--ease-in-out) infinite;
+}
+.cue.still svg {
+  animation-play-state: paused;
+}
+@keyframes bob {
+  50% {
+    transform: translateY(6px);
+  }
 }
 
 /* ── Secciones de inicio ───────────────────── */
@@ -326,16 +398,24 @@
 }
 
 @media (max-width: 60rem) {
-  .hero,
+  .hero-inner,
   .head.split,
   .route-panel,
   .sources-cols {
     grid-template-columns: minmax(0, 1fr);
   }
-  .hero {
-    min-height: 0;
+  .hero-inner {
     gap: var(--space-xl);
-    padding-top: var(--space-xl);
+  }
+  .hero-stage {
+    --stage-chrome: 45svh;
+  }
+}
+
+@media (max-width: 40rem) {
+  /* en el teléfono la flecha ocupa el pie: del paso queda solo la pausa */
+  .hero-say {
+    display: none;
   }
   .route-list {
     columns: 1;
@@ -379,6 +459,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .pitch > *,
+  .cue svg,
   .route-panel {
     animation: none;
   }

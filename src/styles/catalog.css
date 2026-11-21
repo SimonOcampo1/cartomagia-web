@@ -21,7 +21,7 @@
 }
 .search input {
   width: 100%;
-  min-height: 52px;
+  min-height: 48px;
   padding: 0 var(--space-md) 0 calc(var(--space-md) + 32px);
   border: 1px solid var(--color-field-edge);
   border-radius: var(--radius-input);
@@ -39,6 +39,7 @@
 .filter-row {
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-between;
   align-items: center;
   gap: var(--space-sm) var(--space-lg);
 }
@@ -75,46 +76,6 @@
   background: var(--color-ink);
   color: var(--color-paper);
 }
-.chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-xs);
-}
-.chip {
-  min-height: 40px;
-  padding: 0 var(--space-md);
-  border: 1px solid var(--color-field-edge);
-  border-radius: var(--radius-pill);
-  background: transparent;
-  color: var(--color-ink-2);
-  font-size: var(--text-sm);
-  font-weight: 500;
-  transition: background-color var(--dur-short) var(--ease-out), color var(--dur-short) var(--ease-out), transform var(--dur-micro) var(--ease-out);
-}
-.chip:hover {
-  background: var(--color-paper-3);
-  color: var(--color-ink);
-}
-.chip:active {
-  transform: scale(0.97);
-}
-.chip[aria-pressed='true'] {
-  border-color: var(--color-ink);
-  background: var(--color-ink);
-  color: var(--color-paper);
-}
-.chip.ghost {
-  border-style: dashed;
-}
-.count-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: var(--space-md);
-  padding-top: var(--space-md);
-  border-top: 1px solid var(--color-rule);
-}
 .count {
   color: var(--color-muted);
   font-size: var(--text-sm);
@@ -134,35 +95,6 @@
 }
 .link:hover {
   color: var(--color-ink);
-}
-.sort,
-.selects select {
-  min-height: 40px;
-  padding: 0 var(--space-sm);
-  border: 1px solid var(--color-field-edge);
-  border-radius: var(--radius-input);
-  background: var(--color-paper);
-  color: var(--color-ink);
-  font-size: var(--text-sm);
-}
-.selects {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-xs);
-}
-.toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xs);
-  min-height: 44px;
-  color: var(--color-ink-2);
-  font-size: var(--text-sm);
-  cursor: pointer;
-}
-.toggle input {
-  accent-color: var(--color-accent);
-  width: 1.1rem;
-  height: 1.1rem;
 }
 .empty {
   padding: var(--space-3xl) 0;
@@ -414,14 +346,6 @@
   }
   .segmented .pips {
     display: none;
-  }
-  .selects {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    width: 100%;
-  }
-  .selects select {
-    min-width: 0;
   }
   .video-grid {
     grid-template-columns: minmax(0, 1fr);

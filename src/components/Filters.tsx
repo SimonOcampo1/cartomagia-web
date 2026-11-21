@@ -1,25 +1,60 @@
-import { useState } from 'react'
+import { useRef, useState, type ReactNode } from 'react'
 import { LEVEL_NAME, TAG_NAME, type Level, type Tag } from '../data/types.ts'
 import { emptyFilter, type FilterState } from '../lib/filter.ts'
+import { useDismiss } from '../lib/hooks.ts'
+import { Check } from './Check.tsx'
 import { Icon } from './Icons.tsx'
 import { Pips } from './Pips.tsx'
 
 const toggle = <T,>(xs: T[], x: T) => (xs.includes(x) ? xs.filter((y) => y !== x) : [...xs, x])
-const FIRST = 6 // etiquetas a la vista; el resto tras «Más filtros»
 
-type Props = { f: FilterState; set: (f: FilterState) => void; tags: Tag[]; count: number; sort?: React.ReactNode; children?: React.ReactNode }
+type Props = {
+  f: FilterState
+  set: (f: FilterState) => void
+  tags: Tag[]
+  count: number
+  sort: ReactNode
+  /** filtros propios de la página (van dentro del panel) y los activos, para mostrarlos y quitarlos */
+  extra?: ReactNode
+  extraOn?: { label: string; clear: () => void }[]
+}
 
-export function Filters({ f, set, tags, count, sort, children }: Props) {
-  const [more, setMore] = useState(false)
+/** Barra de búsqueda: buscador, panel de filtros y orden en una fila; niveles y resultados debajo. */
+export function Filters({ f, set, tags, count, sort, extra, extraOn = [] }: Props) {
+  const [open, setOpen] = useState(false)
+  const panel = useRef<HTMLDivElement>(null)
+  useDismiss(open, () => setOpen(false), panel)
   const dirty = f.q || f.levels.length || f.tags.length
-  const expanded = more || tags.slice(FIRST).some((t) => f.tags.includes(t))
-  const shown = expanded ? tags : tags.slice(0, FIRST)
   const lv = f.levels.length === 1 ? f.levels[0] : undefined
+  const on = f.tags.length + extraOn.length
   return (
     <div className="filters">
-      <div className="search">
-        <Icon name="search" />
-        <input type="search" placeholder="Buscar por nombre, efecto, canal…" value={f.q} onChange={(e) => set({ ...f, q: e.target.value })} aria-label="Buscar" />
+      <div className="filter-bar">
+        <div className="search">
+          <Icon name="search" />
+          <input type="search" placeholder="Buscar por nombre, efecto, canal…" value={f.q} onChange={(e) => set({ ...f, q: e.target.value })} aria-label="Buscar" />
+        </div>
+        <div className="more" ref={panel}>
+          <button type="button" className="filter-btn" aria-expanded={open} aria-controls="panel-filtros" onClick={() => setOpen(!open)}>
+            <Icon name="sliders" />
+            Filtros
+            {on > 0 && <span className="badge num">{on}</span>}
+          </button>
+          {open && (
+            <div className="filter-panel" id="panel-filtros" role="group" aria-label="Filtros">
+              <fieldset className="tag-grid">
+                <legend>Características</legend>
+                {tags.map((t) => (
+                  <Check key={t} checked={f.tags.includes(t)} onChange={() => set({ ...f, tags: toggle(f.tags, t) })}>
+                    {TAG_NAME[t]}
+                  </Check>
+                ))}
+              </fieldset>
+              {extra && <div className="panel-extra">{extra}</div>}
+            </div>
+          )}
+        </div>
+        {sort}
       </div>
       <div className="filter-row">
         <div className="segmented" role="group" aria-label="Nivel">
@@ -33,21 +68,6 @@ export function Filters({ f, set, tags, count, sort, children }: Props) {
             </button>
           ))}
         </div>
-        {children}
-      </div>
-      <div className="chips" role="group" aria-label="Características">
-        {shown.map((t) => (
-          <button key={t} type="button" aria-pressed={f.tags.includes(t)} className="chip" onClick={() => set({ ...f, tags: toggle(f.tags, t) })}>
-            {TAG_NAME[t]}
-          </button>
-        ))}
-        {tags.length > FIRST && (
-          <button type="button" className="chip ghost" aria-expanded={expanded} onClick={() => setMore(!expanded)}>
-            {expanded ? 'Menos' : `${tags.length - FIRST} filtros más`}
-          </button>
-        )}
-      </div>
-      <div className="count-row">
         <p className="count" aria-live="polite">
           <b className="num">{count}</b> {count === 1 ? 'resultado' : 'resultados'}
           {dirty ? (
@@ -56,8 +76,17 @@ export function Filters({ f, set, tags, count, sort, children }: Props) {
             </button>
           ) : null}
         </p>
-        {sort}
       </div>
+      {on > 0 && (
+        <div className="active-tags" aria-label="Filtros activos">
+          {[...f.tags.map((t) => ({ label: TAG_NAME[t], clear: () => set({ ...f, tags: toggle(f.tags, t) }) })), ...extraOn].map((c) => (
+            <button key={c.label} type="button" className="chip on" onClick={c.clear} aria-label={`Quitar ${c.label}`}>
+              {c.label}
+              <Icon name="close" />
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
