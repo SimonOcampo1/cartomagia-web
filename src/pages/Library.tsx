@@ -1,5 +1,8 @@
 import { useState } from 'react'
-import { Filters, Pips, emptyFilter, matches } from '../components/Filters.tsx'
+import { Filters } from '../components/Filters.tsx'
+import { Pips } from '../components/Pips.tsx'
+import { emptyFilter, matches, norm } from '../lib/filter.ts'
+import { useLearned } from '../lib/hooks.ts'
 import { LEVEL_NAME, TAG_NAME, type Lesson, type Tag } from '../data/types.ts'
 
 // las etiquetas que más se buscan, primero
@@ -9,7 +12,6 @@ const SORTS = {
   rapido: { label: 'Más rápidos de aprender', fn: (a: Lesson, b: Lesson) => (a.minutes ?? 99) - (b.minutes ?? 99) },
   az: { label: 'Alfabético', fn: (a: Lesson, b: Lesson) => a.name.localeCompare(b.name, 'es') },
 }
-import { norm, useLearned } from '../lib.ts'
 
 export function LessonRow({ l, base, learned }: { l: Lesson; base: string; learned: boolean }) {
   return (

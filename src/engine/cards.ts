@@ -4,7 +4,7 @@ export type Suit = 'S' | 'H' | 'D' | 'C'
 
 export const RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
 export const SUITS: Suit[] = ['S', 'H', 'C', 'D']
-export const SUIT_GLYPH: Record<Suit, string> = { S: '♠', H: '♥', D: '♦', C: '♣' }
+const SUIT_GLYPH: Record<Suit, string> = { S: '♠', H: '♥', D: '♦', C: '♣' }
 const SUIT_NAME: Record<Suit, string> = { S: 'picas', H: 'corazones', D: 'diamantes', C: 'tréboles' }
 const RANK_NAME: Record<string, string> = { A: 'As', J: 'J', Q: 'Q', K: 'K' }
 

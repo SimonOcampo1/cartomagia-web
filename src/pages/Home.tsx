@@ -1,14 +1,15 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
-import { Pips } from '../components/Filters.tsx'
+import { Pips } from '../components/Pips.tsx'
 import { Icon } from '../components/Icons.tsx'
-import { MiniCard, Stage, viewOf } from '../components/Stage.tsx'
+import { MiniCard, Stage } from '../components/Stage.tsx'
 import { VideoEmbed } from '../components/VideoEmbed.tsx'
 import { runAuto } from '../engine/auto.ts'
+import { viewOf } from '../engine/view.ts'
 import { veintiuna } from '../data/scripts.ts'
 import { techniques, tricks } from '../data/lessons.ts'
 import { LEVEL_NAME, yt, type Level } from '../data/types.ts'
 import { videos } from '../data/videos.ts'
-import { useLearned } from '../lib.ts'
+import { useLearned } from '../lib/hooks.ts'
 
 const LEVELS: Level[] = ['P', 'I', 'A']
 const LEVEL_BLURB: Record<Level, string> = {

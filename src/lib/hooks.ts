@@ -38,6 +38,3 @@ export function useLearned() {
   }
   return { learned, toggle }
 }
-
-export const norm = (s: string) => s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase()
-export const mmss = (sec: number) => `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`

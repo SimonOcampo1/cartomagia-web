@@ -1,5 +1,5 @@
 import { techniques, tricks } from './data/lessons.ts'
-import { useHash } from './lib.ts'
+import { useHash } from './lib/hooks.ts'
 import { Home } from './pages/Home.tsx'
 import { LessonPage, NotFound } from './pages/LessonPage.tsx'
 import { Library } from './pages/Library.tsx'

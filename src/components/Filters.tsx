@@ -1,27 +1,11 @@
 import { useState } from 'react'
 import { LEVEL_NAME, TAG_NAME, type Level, type Tag } from '../data/types.ts'
+import { emptyFilter, type FilterState } from '../lib/filter.ts'
 import { Icon } from './Icons.tsx'
-
-export type FilterState = { q: string; levels: Level[]; tags: Tag[] }
-export const emptyFilter: FilterState = { q: '', levels: [], tags: [] }
+import { Pips } from './Pips.tsx'
 
 const toggle = <T,>(xs: T[], x: T) => (xs.includes(x) ? xs.filter((y) => y !== x) : [...xs, x])
 const FIRST = 6 // etiquetas a la vista; el resto tras «Más filtros»
-
-/** Niveles: cualquiera de los marcados. Etiquetas: todas las marcadas. */
-export const matches = (f: FilterState, level: Level, tags: Tag[], text: string) =>
-  (!f.levels.length || f.levels.includes(level)) && f.tags.every((t) => tags.includes(t)) && text.includes(f.q)
-
-/** Nivel como medidor de una, dos o tres barras; el nombre del nivel va siempre al lado. */
-export function Pips({ level }: { level: Level }) {
-  return (
-    <span className={`pips lv-${level}`} aria-hidden>
-      <i />
-      <i />
-      <i />
-    </span>
-  )
-}
 
 type Props = { f: FilterState; set: (f: FilterState) => void; tags: Tag[]; count: number; sort?: React.ReactNode; children?: React.ReactNode }
 

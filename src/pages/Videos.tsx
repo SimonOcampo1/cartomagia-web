@@ -1,10 +1,11 @@
 import { useState } from 'react'
-import { Filters, Pips, emptyFilter, matches } from '../components/Filters.tsx'
+import { Filters } from '../components/Filters.tsx'
+import { Pips } from '../components/Pips.tsx'
+import { emptyFilter, matches, norm } from '../lib/filter.ts'
 import { VideoEmbed } from '../components/VideoEmbed.tsx'
 import { lessonById } from '../data/lessons.ts'
 import { LEVEL_NAME, type Tag } from '../data/types.ts'
 import { PLAYLIST_ID, videos } from '../data/videos.ts'
-import { norm } from '../lib.ts'
 
 const TAGS: Tag[] = ['sin-setup', 'automatico', 'impromptu', 'matematico', 'juego-de-manos', 'prediccion', 'mentalismo', 'acaan', 'ases', 'cambio', 'control', 'pocas-cartas', 'visual', 'tecnica']
 const channels = [...new Set(videos.map((v) => v.channel))].sort()

@@ -1,0 +1,385 @@
+/* Inicio: hero, la ruta por niveles, la franja de paño, el riel de videos y las fuentes. */
+/* ── Hero ───────────────────── */
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 6fr) minmax(0, 7fr);
+  gap: var(--space-3xl);
+  align-items: center;
+  max-width: var(--container);
+  min-height: calc(100svh - var(--nav-h));
+  margin-inline: auto;
+  padding: var(--space-xl) var(--gutter) var(--space-2xl);
+}
+.hero h1 {
+  font-size: clamp(2.5rem, 5.8vw, 5.25rem);
+  line-height: 0.98;
+}
+.hero .lead {
+  margin-top: var(--space-lg);
+  color: var(--color-ink-2);
+  max-width: 30ch;
+}
+.cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-top: var(--space-xl);
+}
+.pitch > * {
+  animation: rise 0.6s var(--ease-out) both;
+}
+.pitch > :nth-child(2) {
+  animation-delay: 80ms;
+}
+.pitch > :nth-child(3) {
+  animation-delay: 160ms;
+}
+@keyframes rise {
+  from {
+    transform: translateY(8px);
+  }
+}
+.hero-table {
+  margin: 0;
+}
+/* la lámpara cae sobre las columnas */
+.hero-table .table {
+  --lamp: 64% 30%;
+}
+.hero-table figcaption {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+  min-height: 4.2em;
+}
+.hero-say {
+  display: grid;
+  gap: var(--space-3xs);
+  padding-top: var(--space-xs);
+}
+.hero-say small {
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+}
+
+/* ── Secciones de inicio ───────────────────── */
+.head {
+  display: grid;
+  gap: var(--space-md);
+  margin-bottom: var(--space-2xl);
+}
+.head .lead {
+  color: var(--color-muted);
+}
+.head strong {
+  color: var(--color-brass);
+  font-weight: 500;
+}
+.head.split {
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  align-items: end;
+  gap: var(--gap-columns);
+}
+
+/* la ruta: un programa en tres actos */
+.route {
+  padding-block: var(--section-gap) var(--section-gap-s);
+}
+.route-tabs {
+  display: flex;
+  gap: var(--space-xs);
+  border-bottom: 1px solid var(--color-rule);
+}
+.route-tabs button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-height: 60px;
+  padding: 0 var(--space-lg);
+  border: 0;
+  background: none;
+  color: var(--color-muted);
+  font: 500 var(--text-lg)/1 var(--font-display);
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  transition: color var(--dur-short) var(--ease-out);
+}
+.route-tabs button::after {
+  content: '';
+  position: absolute;
+  left: var(--space-lg);
+  right: var(--space-lg);
+  bottom: -1px;
+  height: 2px;
+  background: var(--color-accent-hi);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-short) var(--ease-out);
+}
+.route-tabs button:hover,
+.route-tabs button[aria-selected='true'] {
+  color: var(--color-ink);
+}
+.route-tabs button[aria-selected='true']::after {
+  transform: scaleX(1);
+}
+.route-tabs .num {
+  font: 400 var(--text-sm)/1 var(--font-body);
+  color: var(--color-muted);
+}
+.route-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+  gap: var(--gap-columns);
+  padding-top: var(--space-2xl);
+  animation: fade var(--dur-short) var(--ease-out);
+}
+.route-blurb {
+  font-size: var(--text-lead);
+  line-height: 1.45;
+  color: var(--color-ink-2);
+  max-width: 30ch;
+}
+.route-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  counter-reset: r;
+  columns: 2;
+  column-gap: var(--gap-columns);
+}
+.route-list li {
+  counter-increment: r;
+  break-inside: avoid;
+}
+.route-list a {
+  display: grid;
+  grid-template-columns: 2.6rem minmax(0, 1fr) auto;
+  column-gap: var(--space-xs);
+  align-items: baseline;
+  padding: var(--space-md) var(--space-sm);
+  border-top: 1px solid var(--color-rule-2);
+  color: var(--color-ink);
+  text-decoration: none;
+  transition: background-color var(--dur-short) var(--ease-out);
+}
+.route-list a::before {
+  content: counter(r, decimal-leading-zero);
+  grid-row: span 2;
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+}
+.route-list a:hover {
+  background: var(--color-paper-2);
+}
+.route-list .name {
+  font: 500 var(--text-title)/1.2 var(--font-display);
+  letter-spacing: -0.025em;
+}
+.route-list .kind {
+  grid-column: 2;
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+}
+.route-list .done {
+  grid-column: 3;
+  grid-row: 1;
+}
+.done {
+  font: 500 var(--text-xs)/1 var(--font-body);
+  color: var(--color-success);
+  border: 1px solid currentColor;
+  border-radius: var(--radius-pill);
+  padding: var(--space-2xs) var(--space-xs);
+  margin-left: var(--space-sm);
+  vertical-align: 0.25em;
+  white-space: nowrap;
+}
+
+/* la promesa, sobre paño */
+.promise {
+  position: relative;
+  padding-block: var(--section-gap-s);
+  background: var(--color-felt-deep);
+}
+.promise::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.18;
+  mix-blend-mode: overlay;
+  background-image: var(--felt-noise);
+}
+.promise p {
+  position: relative;
+  max-width: 30ch;
+  font: 500 var(--text-section)/1.08 var(--font-display);
+  letter-spacing: var(--tracking-display);
+  color: var(--color-ink);
+  text-wrap: balance;
+}
+
+/* videoteca en riel */
+.reel {
+  padding-block: var(--section-gap) 0;
+}
+.rail {
+  --edge: max(var(--gutter), calc((100% - var(--container)) / 2 + var(--gutter)));
+  list-style: none;
+  margin: 0;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(16rem, 22%);
+  gap: var(--gap-columns);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--edge);
+  padding: 0 var(--edge) var(--space-md);
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-rule) transparent;
+}
+.rail > li {
+  scroll-snap-align: start;
+}
+.rail:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 4px;
+}
+
+/* libros y canales */
+.sources {
+  padding-block: var(--section-gap-l) var(--section-gap);
+}
+.sources-cols {
+  display: grid;
+  grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+  gap: var(--gap-columns);
+}
+.books {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: b;
+}
+.books li {
+  counter-increment: b;
+  display: grid;
+  grid-template-columns: 2.6rem minmax(0, 5fr) minmax(0, 4fr);
+  column-gap: var(--space-xs);
+  align-items: baseline;
+  padding: var(--space-lg) 0;
+  border-top: 1px solid var(--color-rule-2);
+}
+.books li::before {
+  content: counter(b, decimal-leading-zero);
+  grid-row: span 2;
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+}
+.books cite {
+  font: 500 var(--text-title)/1.2 var(--font-display);
+  font-style: normal;
+  letter-spacing: -0.025em;
+  color: var(--color-ink);
+}
+.books span {
+  grid-column: 3;
+  grid-row: 1;
+  color: var(--color-ink-2);
+}
+.books p {
+  grid-column: 3;
+  margin-top: var(--space-2xs);
+  color: var(--color-muted);
+  font-size: var(--text-sm);
+}
+.channels h3 {
+  margin-bottom: var(--space-md);
+}
+.channels ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.channels li {
+  border-top: 1px solid var(--color-rule-2);
+}
+.channels a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  min-height: 52px;
+  text-decoration: none;
+}
+.channels .icon {
+  width: 16px;
+  height: 16px;
+  color: var(--color-muted);
+}
+
+@media (max-width: 60rem) {
+  .hero,
+  .head.split,
+  .route-panel,
+  .sources-cols {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .hero {
+    min-height: 0;
+    gap: var(--space-xl);
+    padding-top: var(--space-xl);
+  }
+  .route-list {
+    columns: 1;
+  }
+}
+
+@media (max-width: 40rem) {
+  .cta .btn {
+    flex: 1 1 100%;
+  }
+  .route-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+  }
+  .route-tabs button {
+    justify-content: center;
+    gap: var(--space-xs);
+    padding: 0 var(--space-2xs);
+    font-size: var(--text-md);
+  }
+  .route-tabs .num {
+    display: none;
+  }
+  .route-tabs button::after {
+    left: var(--space-xs);
+    right: var(--space-xs);
+  }
+  .books li {
+    grid-template-columns: 2.6rem minmax(0, 1fr);
+  }
+  .books span,
+  .books p {
+    grid-column: 2;
+    grid-row: auto;
+  }
+  .rail {
+    grid-auto-columns: 78%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pitch > *,
+  .route-panel {
+    animation: none;
+  }
+}

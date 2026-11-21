@@ -1,0 +1,176 @@
+/* La ficha de un truco o técnica. */
+/* ── Ficha ───────────────────── */
+.crumbs {
+  display: flex;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-lg);
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+}
+.lesson-head {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: var(--space-md) var(--gap-columns);
+  align-items: end;
+}
+.lesson-head h1 {
+  font-size: var(--text-display-s);
+}
+.lesson-head .lead {
+  grid-column: 1;
+  color: var(--color-ink-2);
+}
+.taglist {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  justify-self: end;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.taglist li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  min-height: 32px;
+  padding: 0 var(--space-sm);
+  border-radius: var(--radius-pill);
+  background: var(--color-paper-2);
+  font-size: var(--text-sm);
+  color: var(--color-ink-2);
+}
+.no-anim {
+  margin: var(--space-xl) 0;
+  padding: var(--space-xl);
+  border-radius: var(--radius-card);
+  background: var(--color-paper-2);
+  color: var(--color-ink-2);
+  max-width: 70ch;
+}
+
+/* el tutorial junto al tapete */
+.hands {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: var(--gap-columns);
+  align-items: center;
+  margin-top: var(--space-3xl);
+}
+.hands h2 {
+  font-size: var(--text-2xl);
+  margin-bottom: var(--space-sm);
+}
+.hands p {
+  color: var(--color-ink-2);
+  max-width: 40ch;
+}
+
+.lesson-body {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+  gap: var(--space-3xl);
+  margin-top: var(--space-3xl);
+}
+.lesson-body h2,
+.lesson-videos h2 {
+  font-size: var(--text-2xl);
+  margin-bottom: var(--space-md);
+}
+.lesson-body aside h2 {
+  font-size: var(--text-lg);
+  margin: var(--space-xl) 0 var(--space-xs);
+}
+.lesson-body aside h2:first-child {
+  margin-top: 0;
+}
+.lesson-body section > p {
+  font-size: var(--text-lg);
+  line-height: 1.55;
+  max-width: 64ch;
+}
+.lesson-body h3 {
+  margin: var(--space-xl) 0 var(--space-xs);
+}
+.tips {
+  padding-left: var(--space-lg);
+  max-width: 64ch;
+}
+.tips li {
+  margin: var(--space-xs) 0;
+}
+.tips li::marker {
+  color: var(--color-accent-hi);
+}
+.lesson-body .origin {
+  margin-top: var(--space-lg);
+  color: var(--color-muted);
+  font-size: var(--text-md);
+}
+.learned {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  min-height: 44px;
+  margin-top: var(--space-xl);
+  padding: 0 var(--space-lg);
+  border: 1px solid var(--color-field-edge);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  font-weight: 600;
+  transition: background-color var(--dur-short) var(--ease-out), border-color var(--dur-short) var(--ease-out);
+}
+.learned:hover {
+  border-color: var(--color-success);
+}
+.learned.on {
+  background: var(--color-success);
+  border-color: var(--color-success);
+  color: var(--color-paper);
+}
+.xlinks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.xlinks li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-md);
+  min-height: 48px;
+  border-top: 1px solid var(--color-rule-2);
+}
+.xlinks a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+.xlinks .icon {
+  width: 16px;
+  height: 16px;
+}
+.xlinks span {
+  color: var(--color-muted);
+  font-size: var(--text-sm);
+}
+.lesson-videos {
+  margin-top: var(--space-3xl);
+}
+
+@media (max-width: 60rem) {
+  .hands,
+  .lesson-head,
+  .lesson-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .taglist {
+    grid-column: 1;
+    grid-row: auto;
+    justify-self: start;
+    justify-content: flex-start;
+  }
+}

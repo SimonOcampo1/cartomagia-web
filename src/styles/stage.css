@@ -1,0 +1,189 @@
+/* El tapete: paño, cartas, manos, rótulos y marcas de la visión de mago. */
+/* ── Tapete y cartas ───────────────────── */
+.table {
+  position: relative;
+  overflow: hidden;
+  padding: var(--space-md);
+  border-radius: var(--radius-card);
+  background: radial-gradient(90% 80% at var(--lamp, 50% 38%), var(--color-felt-lit) 0%, var(--color-felt) 30%, var(--color-felt-deep) 72%, var(--color-felt-edge) 100%);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in oklab, var(--color-felt-line) 55%, transparent),
+    inset 0 2px 48px color-mix(in oklab, var(--color-shade) 65%, transparent),
+    0 40px 80px -40px var(--color-shade);
+}
+.table::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.22;
+  mix-blend-mode: overlay;
+  background-image: var(--felt-noise);
+}
+.table.win {
+  box-shadow:
+    inset 0 0 0 1px var(--color-brass),
+    inset 0 2px 48px color-mix(in oklab, var(--color-shade) 65%, transparent),
+    0 40px 80px -40px var(--color-shade);
+}
+.stage {
+  position: relative;
+  width: 100%;
+  min-width: min(100%, 520px);
+  margin: 0 auto;
+  perspective: 1500px;
+}
+.camera {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform 0.8s var(--ease-out);
+}
+.card {
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: default;
+  border-radius: 0.5em;
+  transform-style: preserve-3d;
+}
+.card:disabled {
+  color: inherit;
+}
+.flipper {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+}
+.face {
+  position: absolute;
+  inset: 0;
+  border-radius: 0.42em;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  background: center / 100% 100% no-repeat;
+  /* canto marfil: un mazo apilado muestra su lateral como un mazo de verdad */
+  box-shadow:
+    0 0.025em 0 var(--color-card-edge),
+    0 0.06em 0.12em color-mix(in oklab, var(--color-shade) 35%, transparent);
+}
+.back {
+  transform: rotateY(180deg);
+}
+.face::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+.card.m-chosen .face,
+.card.m-path .face,
+.card.m-key .face,
+.card.m-force .face {
+  outline-offset: 0.08em;
+}
+.card.m-chosen .face {
+  outline: 0.16em solid var(--color-brass);
+}
+.card.m-path .face {
+  outline: 0.12em solid color-mix(in oklab, var(--color-brass) 70%, transparent);
+}
+.card.m-path .front::after {
+  background: color-mix(in oklab, var(--color-brass) 22%, transparent);
+}
+.card.m-key .front::after {
+  background: color-mix(in oklab, var(--color-cool) 22%, transparent);
+}
+.card.m-force .face {
+  outline: 0.14em dashed var(--color-brass);
+}
+.card.m-key .face {
+  outline: 0.14em solid var(--color-cool);
+}
+.card.m-dim .face::after {
+  background: color-mix(in oklab, var(--color-paper) 45%, transparent);
+}
+.card.pickable {
+  cursor: pointer;
+}
+.card.pickable:hover .face,
+.card.pickable:focus-visible .face {
+  outline: 0.16em solid var(--color-ink);
+}
+.zone-label {
+  position: absolute;
+  translate: 0 calc(-100% - 0.35em);
+  line-height: 1;
+  color: var(--color-ink);
+  font-weight: 500;
+  transition: opacity var(--dur-short) var(--ease-out);
+  white-space: nowrap;
+  pointer-events: none;
+}
+/* una zona se rotula cuando le cae la primera carta */
+.zone-label.empty {
+  opacity: 0;
+}
+.slot {
+  position: absolute;
+  z-index: 1;
+  transform: translateZ(60px) translateY(-50%);
+  white-space: nowrap;
+  pointer-events: none;
+  padding: 0.2em 0.6em;
+  border-radius: var(--radius-pill);
+  background: var(--color-ink);
+  color: var(--color-paper);
+  font-weight: 600;
+  box-shadow: 0 0.3em 1em color-mix(in oklab, var(--color-shade) 50%, transparent);
+}
+.hand {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  transform-origin: 50% 50%;
+}
+.hand path {
+  fill: color-mix(in oklab, var(--color-hand) 12%, transparent);
+  stroke: color-mix(in oklab, var(--color-ink) 60%, transparent);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+.hand.above path {
+  fill: color-mix(in oklab, var(--color-hand) 18%, transparent);
+}
+.inset {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin: 0 0 var(--space-xs);
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+  font-weight: 500;
+}
+.mini-card {
+  display: inline-block;
+  width: 2.8rem;
+  height: 3.9rem;
+  border-radius: 0.25rem;
+  background: center / 100% 100% no-repeat;
+  box-shadow: 0 2px 6px color-mix(in oklab, var(--color-shade) 40%, transparent);
+}
+
+@media (max-width: 40rem) {
+  .table {
+    border-radius: var(--radius-input);
+    padding: var(--space-xs);
+  }
+  .stage {
+    min-width: 0;
+  }
+}

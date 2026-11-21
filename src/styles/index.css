@@ -1,0 +1,24 @@
+/* Hallmark · shape: Stage hero, Switcher, felt band, Rail, Rows (/); app screen (/trucos, /tecnicas, ficha, /videos) · genre: atmospheric · theme: brand · redesign: full
+ * paper: oklch(17% 0.018 162) · accent: oklch(55% 0.165 27) · display: Funnel Display · body: Funnel Sans · hero: Stage (/) · nav: floating pill on blur · footer: mast · signature: el tapete repartiendo Las 21 cartas en vivo bajo luz cenital
+ * axes: dark/grotesk-sans/chromatic-red · posture: Restrained · contrast: pass · fold: pass · job: try · v2.0.0 */
+/* Hallmark · pre-emit critique: P4 H4 E4 S5 R4 V3 · weakest: V, primera corrida sin log; el hero gira sobre el tapete en vivo y la ruta se lee como programa por niveles */
+/* Hallmark · hero-review: fix · 5 findings · 3 resolved 2 partial (el paño vacío es donde caen el paquete y el conteo más tarde en el bucle; las caras a 375 quedan chicas por el ancho) */
+/* Hallmark · finish-review: subagent · 7 findings · 4 resolved 1 partial 1 dismissed 1 to the owner (rename La ruta, Para seguir) · gap: home lost the one-line effects of the old route list */
+/* Hallmark · waive 81 · the table holds 21 real card faces painted as background images · el tapete es el producto en vivo, el linter solo lee su degradado de paño */
+/* Hallmark · reworded "Aprende a hacer magia con un mazo, de la primera carta al pase clásico." to "De la primera carta al pase clásico." · 38i and 58 name the old head */
+/* Hallmark · dropped the h3 heads "Principiante", "Intermedio", "Avanzado" · la ruta los nombra en sus pestañas, el mismo texto como tab */
+/* Hallmark · answered F4 · the other filled recipes are pressed states of segmented, chip and choice controls, not a second primary */
+/* Hallmark · answered F7 · the pill on .done and .slot marks a live state on a row or on the tapete; nav links and skip are controls */
+/* Hallmark · dismissed 25 · .promise p is a one-sentence statement at section size, 30ch keeps it to three lines */
+/* Hallmark · dismissed 49 · .btn sets white-space: nowrap, the label never wraps */
+/* Hallmark · answered F20 · the videoteca count is the filtered data, any filter changes the last row */
+/* Hallmark · dismissed finish 4 · the rail cuts its next item at the edge on purpose (layout.md § 5, 12), it scrolls by touch, wheel and keys */
+/* Hallmark · waive 39b · step rows and video thumbnails are buttons sized by their content · cada paso del truco y cada miniatura de la videoteca son botones grandes a propósito */
+@import url('./tokens.css');
+@import url('./base.css');
+@import url('./shell.css');
+@import url('./stage.css');
+@import url('./home.css');
+@import url('./catalog.css');
+@import url('./player.css');
+@import url('./lesson.css');

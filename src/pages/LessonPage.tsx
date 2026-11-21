@@ -1,11 +1,11 @@
-import { Pips } from '../components/Filters.tsx'
+import { Pips } from '../components/Pips.tsx'
 import { Icon } from '../components/Icons.tsx'
 import { Player } from '../components/Player.tsx'
 import { VideoEmbed } from '../components/VideoEmbed.tsx'
 import { lessonById } from '../data/lessons.ts'
 import { LEVEL_NAME, TAG_NAME } from '../data/types.ts'
 import { videos } from '../data/videos.ts'
-import { useLearned } from '../lib.ts'
+import { useLearned } from '../lib/hooks.ts'
 
 export function LessonPage({ id, kind }: { id: string; kind: 'truco' | 'tecnica' }) {
   const l = lessonById[id]

@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import { mmss } from '../lib.ts'
 import type { Video } from '../data/types.ts'
 import { Icon } from './Icons.tsx'
+
+const mmss = (sec: number) => `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`
 
 /** Miniatura que se convierte en reproductor al pulsarla: no carga YouTube hasta que hace falta. */
 export function VideoEmbed({ v, priority = false }: { v: Video; priority?: boolean }) {

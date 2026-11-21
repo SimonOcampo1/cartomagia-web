@@ -3,8 +3,9 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { autoAnswer } from '../engine/auto.ts'
 import { rng, short } from '../engine/cards.ts'
 import { run, type Frame, type ScriptFn } from '../engine/scene.ts'
+import { viewOf } from '../engine/view.ts'
 import { Icon } from './Icons.tsx'
-import { MiniCard, Stage, viewOf } from './Stage.tsx'
+import { MiniCard, Stage } from './Stage.tsx'
 
 const newSeed = () => Math.floor(Math.random() * 1e9)
 const SPEEDS = [0.5, 1, 1.5, 2]
