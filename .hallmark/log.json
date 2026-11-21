@@ -1,0 +1,32 @@
+[
+ {
+  "mode": "redesign",
+  "depth": "full",
+  "scope": "site",
+  "shape": "Stage hero, Switcher, felt band, Rail, Rows; app screens",
+  "theme": "brand",
+  "axes": "dark/grotesk-sans/chromatic-red",
+  "hero": "Stage",
+  "nav": "floating pill on blur",
+  "footer": "mast",
+  "imagery": "product live (tapete) + YouTube thumbnails",
+  "photos": [],
+  "entry": "fade",
+  "fingerprint": "stage-switcher-band-rail-rows-mast",
+  "sections": [
+   "hero",
+   "switcher",
+   "band statement",
+   "rail",
+   "rows",
+   "footer mast"
+  ],
+  "signature": "el tapete repartiendo Las 21 cartas en vivo bajo luz cenital",
+  "waived": [
+   "81",
+   "39b"
+  ],
+  "prompt": "escuela de cartomagia, salón teatral nocturno",
+  "date": "2026-11-21"
+ }
+]

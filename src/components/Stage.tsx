@@ -168,7 +168,7 @@ export function Stage({ frame, prev, step = 0, clickable, onPick, xray = true, v
         >
           {Object.entries(frame.geo).map(([z, g]) =>
             g.label ? (
-              <span key={z} className="zone-label" style={{ left: g.x * u, top: (g.y - 2.6) * u, fontSize: Math.max(10, u * 1.5) }}>
+              <span key={z} className={`zone-label ${frame.zones[z].length ? '' : 'empty'}`} style={{ left: g.x * u, top: (g.y - 2.6) * u, fontSize: Math.max(11, u * 1.5) }}>
                 {g.label}
               </span>
             ) : null,

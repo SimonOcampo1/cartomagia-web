@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Filters, emptyFilter, matches } from '../components/Filters.tsx'
+import { Filters, Pips, emptyFilter, matches } from '../components/Filters.tsx'
 import { VideoEmbed } from '../components/VideoEmbed.tsx'
 import { lessonById } from '../data/lessons.ts'
 import { LEVEL_NAME, type Tag } from '../data/types.ts'
@@ -31,7 +31,7 @@ export function Videos() {
         <p>
           {videos.length} tutoriales clasificados por nivel y tipo de truco: los de{' '}
           <a href={`https://www.youtube.com/playlist?list=${PLAYLIST_ID}`} target="_blank" rel="noreferrer">
-            tu lista de YouTube ↗
+            tu lista de YouTube
           </a>{' '}
           más {videos.filter((v) => v.source === 'ext').length} elegidos de otros canales de referencia (52Kards, Numberphile, CardMechanic, Chris Ramsay, Italo Castillo…) para cada ficha. El nivel es orientativo.
         </p>
@@ -75,11 +75,14 @@ export function Videos() {
       </Filters>
       {shown.length ? (
         <div className="video-grid">
-          {shown.map((v) => (
+          {shown.map((v, n) => (
             <div key={v.id} className="video-card">
-              <VideoEmbed v={v} />
+              <VideoEmbed v={v} priority={n === 0} />
               <p className="vtags">
-                <span className={`lvtag lv-${v.level}`}>{LEVEL_NAME[v.level]}</span>
+                <span className="lvtag">
+                  <Pips level={v.level} />
+                  {LEVEL_NAME[v.level]}
+                </span>
                 {v.links
                   .map((id) => lessonById[id])
                   .filter(Boolean)

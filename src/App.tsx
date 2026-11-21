@@ -24,29 +24,47 @@ function route(hash: string) {
 export default function App() {
   const hash = useHash()
   const section = hash.split('/')[1]
+  const current = (href: string) =>
+    (section && href.startsWith(`#/${section}`)) || (section === 'truco' && href === '#/trucos') || (section === 'tecnica' && href === '#/tecnicas') ? 'page' : undefined
   return (
     <>
       <a className="skip" href="#/" onClick={(e) => (e.preventDefault(), document.getElementById('contenido')?.focus())}>
         Saltar al contenido
       </a>
       <header className="topbar">
-        <a href="#/" className="brand">
-          Tapete
-          <span>escuela de cartomagia</span>
-        </a>
-        <nav aria-label="Principal">
-          {NAV.map(([href, label]) => (
-            <a key={href} href={href} aria-current={(section && href.startsWith(`#/${section}`)) || (section === 'truco' && href === '#/trucos') || (section === 'tecnica' && href === '#/tecnicas') ? 'page' : undefined}>
-              {label}
-            </a>
-          ))}
-        </nav>
+        <div className="topbar-pill">
+          <a href="#/" className="brand" aria-label="Tapete, inicio">
+            Tapete
+            <span>escuela de cartomagia</span>
+          </a>
+          <nav aria-label="Principal">
+            {NAV.map(([href, label]) => (
+              <a key={href} href={href} aria-current={current(href)}>
+                {label}
+              </a>
+            ))}
+          </nav>
+        </div>
       </header>
-      <div id="contenido" tabIndex={-1}>
+      <div id="contenido" tabIndex={-1} key={hash} className="view">
         {route(hash)}
       </div>
       <footer className="foot">
-        <p>Los métodos clásicos se explican aquí; las rutinas de cada autor, en sus videos. Apoya a los canales que te enseñan.</p>
+        <div className="container">
+          <a href="#/" className="foot-mark" aria-label="Tapete, inicio">
+            Tapete
+          </a>
+          <div className="foot-row">
+            <p>Los métodos clásicos se explican aquí; las rutinas de cada autor, en sus videos. Apoya a los canales que te enseñan.</p>
+            <nav aria-label="Pie">
+              {NAV.map(([href, label]) => (
+                <a key={href} href={href}>
+                  {label}
+                </a>
+              ))}
+            </nav>
+          </div>
+        </div>
       </footer>
     </>
   )

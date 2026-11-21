@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Filters, emptyFilter, matches } from '../components/Filters.tsx'
+import { Filters, Pips, emptyFilter, matches } from '../components/Filters.tsx'
 import { LEVEL_NAME, TAG_NAME, type Lesson, type Tag } from '../data/types.ts'
 
 // las etiquetas que más se buscan, primero
@@ -14,9 +14,9 @@ import { norm, useLearned } from '../lib.ts'
 export function LessonRow({ l, base, learned }: { l: Lesson; base: string; learned: boolean }) {
   return (
     <li>
-      <a href={`#/${base}/${l.id}`} className={`lesson-row lv-${l.level}`}>
+      <a href={`#/${base}/${l.id}`} className="lesson-row">
         <span className="lv">
-          <i aria-hidden />
+          <Pips level={l.level} />
           {LEVEL_NAME[l.level]}
         </span>
         <span className="name">
@@ -28,10 +28,10 @@ export function LessonRow({ l, base, learned }: { l: Lesson; base: string; learn
           {l.tags
             .filter((t) => t !== 'tecnica')
             .map((t) => TAG_NAME[t])
-            .join(' · ')}
+            .join(', ')}
         </span>
         <span className="go" aria-hidden>
-          {l.script ? 'Ver paso a paso' : 'Ver videos'} <b>→</b>
+          {l.script ? 'Ver paso a paso' : 'Ver videos'}
         </span>
       </a>
     </li>

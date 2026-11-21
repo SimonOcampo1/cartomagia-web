@@ -100,9 +100,8 @@ export function Player({ script, sim, tilt3d = false }: { script: ScriptFn; sim?
               {fr.caption}
               {fr.ask?.answer !== undefined && (
                 <em>
-                  {' '}
-                  → {answerLabel(fr)}
-                  {auto.includes(askIndex(n)) && ' (al azar)'}
+                  {answerLabel(fr)}
+                  {auto.includes(askIndex(n)) && ', al azar'}
                 </em>
               )}
             </span>

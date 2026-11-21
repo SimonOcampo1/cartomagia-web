@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { mmss } from '../lib.ts'
 import type { Video } from '../data/types.ts'
+import { Icon } from './Icons.tsx'
 
 /** Miniatura que se convierte en reproductor al pulsarla: no carga YouTube hasta que hace falta. */
-export function VideoEmbed({ v }: { v: Video }) {
+export function VideoEmbed({ v, priority = false }: { v: Video; priority?: boolean }) {
   const [on, setOn] = useState(false)
   return (
     <div className="video">
@@ -17,9 +18,16 @@ export function VideoEmbed({ v }: { v: Video }) {
           />
         ) : (
           <button type="button" onClick={() => setOn(true)} aria-label={`Reproducir: ${v.title}`}>
-            <img src={`https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`} alt="" loading="lazy" width={480} height={360} />
+            <img
+              src={`https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`}
+              alt=""
+              loading={priority ? undefined : 'lazy'}
+              fetchPriority={priority ? 'high' : undefined}
+              width={480}
+              height={360}
+            />
             <span className="play" aria-hidden>
-              ▶
+              <Icon name="play" />
             </span>
             <span className="dur">{mmss(v.dur)}</span>
           </button>
@@ -27,7 +35,8 @@ export function VideoEmbed({ v }: { v: Video }) {
       </div>
       <p className="vtitle">{v.title}</p>
       <p className="vmeta">
-        {v.channel} · {v.lang === 'es' ? 'Español' : 'Inglés'}
+        <span>{v.channel}</span>
+        <span>{v.lang === 'es' ? 'Español' : 'Inglés'}</span>
       </p>
     </div>
   )

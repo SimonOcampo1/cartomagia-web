@@ -1,3 +1,5 @@
+import { Pips } from '../components/Filters.tsx'
+import { Icon } from '../components/Icons.tsx'
 import { Player } from '../components/Player.tsx'
 import { VideoEmbed } from '../components/VideoEmbed.tsx'
 import { lessonById } from '../data/lessons.ts'
@@ -26,13 +28,16 @@ export function LessonPage({ id, kind }: { id: string; kind: 'truco' | 'tecnica'
         <h1>{l.name}</h1>
         <p className="lead">{l.effect}</p>
         <ul className="taglist">
-          <li className={`lvtag lv-${l.level}`}>{LEVEL_NAME[l.level]}</li>
+          <li className="lvtag">
+            <Pips level={l.level} />
+            {LEVEL_NAME[l.level]}
+          </li>
           {l.tags
             .filter((t) => t !== 'tecnica')
             .map((t) => (
               <li key={t}>{TAG_NAME[t]}</li>
             ))}
-          {l.minutes && <li>~{l.minutes} min</li>}
+          {l.minutes && <li className="num">~{l.minutes} min</li>}
         </ul>
       </header>
 
@@ -58,7 +63,14 @@ export function LessonPage({ id, kind }: { id: string; kind: 'truco' | 'tecnica'
           )}
           {l.origin && <p className="origin">{l.origin}</p>}
           <button type="button" className={`learned ${learned.has(l.id) ? 'on' : ''}`} aria-pressed={learned.has(l.id)} onClick={() => toggle(l.id)}>
-            {learned.has(l.id) ? '✓ Aprendido' : 'Marcar como aprendido'}
+            {learned.has(l.id) ? (
+              <>
+                <Icon name="check" />
+                Aprendido
+              </>
+            ) : (
+              'Marcar como aprendido'
+            )}
           </button>
         </section>
         <aside>
@@ -93,7 +105,8 @@ export function LessonPage({ id, kind }: { id: string; kind: 'truco' | 'tecnica'
                 {l.links.map((k) => (
                   <li key={k.url}>
                     <a href={k.url} target="_blank" rel="noreferrer">
-                      {k.label} ↗
+                      {k.label}
+                      <Icon name="external" />
                     </a>
                   </li>
                 ))}
